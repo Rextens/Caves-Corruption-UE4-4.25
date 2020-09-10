@@ -1,6 +1,6 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
-
+#include "UObject/Class.h"
 #include "PlayerCharacter.h"
 
 
@@ -10,6 +10,43 @@ APlayerCharacter::APlayerCharacter()
  	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
+	//characterMesh = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("Character's mesh"));
+	//characterMesh->SetupAttachment(RootComponent);
+
+	static ConstructorHelpers::FObjectFinder<USkeletalMesh> testMannequin(TEXT("/Game/AnimStarterPack/UE4_Mannequin/Mesh/SK_Mannequin"));
+	const ConstructorHelpers::FObjectFinder<UAnimationAsset> walkAnimation(TEXT("/Game/AnimStarterPack/Walk_Fwd_Rifle_Ironsights"));
+
+	if (testMannequin.Succeeded())
+	{
+		GetMesh()->SetSkeletalMesh(testMannequin.Object);
+		GetMesh()->SetRelativeLocation(FVector(0.0f, 0.0f, -90.0f));
+		GetMesh()->AddWorldRotation(FRotator(0.0f, 270.0f, 0.0f));
+
+		if (walkAnimation.Succeeded())
+		{
+			GetMesh()->SetAnimationMode(EAnimationMode::AnimationSingleNode);
+			//GetMesh()->SetAnimation(walkAnimation.Object);
+			//GetMesh()->Play(true);
+			GetMesh()->PlayAnimation(walkAnimation.Object, true);
+			GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Yellow, TEXT("Loaded"));
+		}
+		else
+		{
+			GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Yellow, TEXT("Could not load animation"));
+		}
+
+		characterView = CreateDefaultSubobject<UCameraComponent>(TEXT("CameraComp"));
+		characterView->AttachTo(GetMesh(), FName("head"), EAttachLocation::KeepRelativeOffset, true);
+		characterView->AddRelativeRotation(FRotator(180.0f, -90.0f, 90.0f));
+		characterView->bUsePawnControlRotation = false;
+		bUseControllerRotationPitch = true;
+		//bUseControllerRotationYaw = true;
+		//bUseControllerRotationRoll = true;
+		characterView->bLockToHmd = true;
+		
+	}
+
+	//GetMesh()
 }
 
 // Called when the game starts or when spawned
@@ -45,6 +82,13 @@ void APlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCom
 
 	PlayerInputComponent->BindAction("Open/Close Gui", IE_Pressed, this, &APlayerCharacter::openEquipment);
 }
+
+void APlayerCharacter::PostInitializeComponents() {
+	Super::PostInitializeComponents();
+		
+}
+
+
 
 void APlayerCharacter::MoveForward(float Value)
 {

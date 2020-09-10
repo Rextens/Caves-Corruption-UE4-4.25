@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
+#include "Camera/CameraComponent.h"
 #include "PlayerCharacter.generated.h"
 
 UCLASS()
@@ -25,6 +26,8 @@ public:
 
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
+	virtual void PostInitializeComponents() override;
+
 	//My variables
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
@@ -34,8 +37,16 @@ public:
 		bool showHUD = true;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-		APlayerController* playerController;
+		APlayerController *playerController;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		UCameraComponent *characterView;
+
+	//UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Assets")
+	//	USkeletalMesh* skeletalMesh;
+
+	//UPROPERTY(VisibleAnywhere, Category = SkeletalMesh)
+	//	USkeletalMeshComponent* characterMesh;
 
 	//My function
 
