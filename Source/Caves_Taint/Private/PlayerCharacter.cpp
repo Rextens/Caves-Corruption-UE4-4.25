@@ -1,6 +1,11 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 #include "UObject/Class.h"
+#include "Engine/World.h"
+#include "DrawDebugHelpers.h"
+#include "VoxelWorldGenerators/VoxelWorldGeneratorHelpers.h"
+#include "VoxelTools/Gen/VoxelSphereTools.h"
+#include "VoxelWorld.h"
 #include "PlayerCharacter.h"
 
 
@@ -14,7 +19,7 @@ APlayerCharacter::APlayerCharacter()
 	//characterMesh->SetupAttachment(RootComponent);
 
 	static ConstructorHelpers::FObjectFinder<USkeletalMesh> testMannequin(TEXT("/Game/AnimStarterPack/UE4_Mannequin/Mesh/SK_Mannequin"));
-	const ConstructorHelpers::FObjectFinder<UAnimationAsset> walkAnimation(TEXT("/Game/AnimStarterPack/Walk_Fwd_Rifle_Ironsights"));
+	//const ConstructorHelpers::FObjectFinder<UAnimationAsset> walkAnimation(TEXT("/Game/AnimStarterPack/Walk_Fwd_Rifle_Ironsights"));
 
 	if (testMannequin.Succeeded())
 	{
@@ -22,26 +27,25 @@ APlayerCharacter::APlayerCharacter()
 		GetMesh()->SetRelativeLocation(FVector(0.0f, 0.0f, -90.0f));
 		GetMesh()->AddWorldRotation(FRotator(0.0f, 270.0f, 0.0f));
 
+		/*
 		if (walkAnimation.Succeeded())
 		{
 			GetMesh()->SetAnimationMode(EAnimationMode::AnimationSingleNode);
 			//GetMesh()->SetAnimation(walkAnimation.Object);
 			//GetMesh()->Play(true);
 			GetMesh()->PlayAnimation(walkAnimation.Object, true);
-			GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Yellow, TEXT("Loaded"));
+			//GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Yellow, TEXT("Loaded"));
 		}
 		else
 		{
 			GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Yellow, TEXT("Could not load animation"));
 		}
-
+		*/
 		characterView = CreateDefaultSubobject<UCameraComponent>(TEXT("CameraComp"));
-		characterView->AttachTo(GetMesh(), FName("head"), EAttachLocation::KeepRelativeOffset, true);
+		characterView->AttachToComponent(GetMesh(), FAttachmentTransformRules::KeepRelativeTransform, "head");//FName("head"), EAttachLocation::KeepRelativeOffset, true);
 		characterView->AddRelativeRotation(FRotator(180.0f, -90.0f, 90.0f));
 		characterView->bUsePawnControlRotation = false;
 		bUseControllerRotationPitch = true;
-		//bUseControllerRotationYaw = true;
-		//bUseControllerRotationRoll = true;
 		characterView->bLockToHmd = true;
 		
 	}
@@ -81,6 +85,8 @@ void APlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCom
 	PlayerInputComponent->BindAction("Jump", IE_Released, this, &APlayerCharacter::StopJump);
 
 	PlayerInputComponent->BindAction("Open/Close Gui", IE_Pressed, this, &APlayerCharacter::openEquipment);
+
+	PlayerInputComponent->BindAction("Action", IE_Pressed, this, &APlayerCharacter::action);
 }
 
 void APlayerCharacter::PostInitializeComponents() {
@@ -196,4 +202,22 @@ void APlayerCharacter::hideHUD()
 	}
 	showHUD = !showHUD;
 	*/
+}
+
+void APlayerCharacter::action()
+{
+	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("Test"));
+
+	characterView->GetComponentLocation();
+	characterView->GetForwardVector();
+
+	FHitResult hitResult;
+	GetWorld()->LineTraceSingleByChannel(hitResult, characterView->GetComponentLocation(), characterView->GetForwardVector() * 1000.0f + characterView->GetComponentLocation(), ECC_Visibility);
+	DrawDebugLine(GetWorld(), characterView->GetComponentLocation(), characterView->GetForwardVector() * 1000.0f + characterView->GetComponentLocation(), FColor::Red, false, 2.0f);
+
+	AVoxelWorld* voxelWorldReference = nullptr;
+
+	voxelWorldReference = Cast<AVoxelWorld>(hitResult.Actor);
+	UVoxelSphereTools::RemoveSphere(voxelWorldReference, hitResult.Location, 100.0f);
+	UVoxelSphereTools::SmoothSphere(voxelWorldReference, hitResult.Location, 100.0f, 0.5f);
 }

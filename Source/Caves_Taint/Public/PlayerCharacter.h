@@ -76,4 +76,7 @@ public:
 
 	UFUNCTION()
 		void hideHUD();
+
+	UFUNCTION()
+		void action();
 };
