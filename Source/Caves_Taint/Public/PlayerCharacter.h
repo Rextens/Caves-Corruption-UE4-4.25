@@ -42,11 +42,11 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		UCameraComponent *characterView;
 
-	//UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Assets")
-	//	USkeletalMesh* skeletalMesh;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Assets")
+		USkeletalMesh* skeletalMesh;
 
-	//UPROPERTY(VisibleAnywhere, Category = SkeletalMesh)
-	//	USkeletalMeshComponent* characterMesh;
+	UPROPERTY(VisibleAnywhere, Category = SkeletalMesh)
+		USkeletalMeshComponent* characterMesh;
 
 	//My function
 

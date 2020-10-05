@@ -6,6 +6,7 @@
 #include "CoreMinimal.h"
 #include "VoxelFastNoise.h"
 #include "VoxelWorldGenerators/VoxelWorldGeneratorHelpers.h"
+#include "VoxelMaterialBuilder.h"
 #include "WorldGenerator.generated.h"
 
 /**

@@ -13,5 +13,7 @@ UCLASS()
 class CAVES_TAINT_API ACharacterController : public APlayerController
 {
 	GENERATED_BODY()
-	
+public:
+
+	//virtual void UpdateRotation(float DeltaTime) override;
 };

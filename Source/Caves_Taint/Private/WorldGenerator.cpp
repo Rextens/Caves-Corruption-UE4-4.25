@@ -25,21 +25,22 @@ v_flt FVoxelCavesWorldGeneratorInstance::GetValueImpl(v_flt X, v_flt Y, v_flt Z,
 {
 	const float Height = Noise.GetPerlin_3D(X, Y, Z, 0.01f);
 
-	int returningValue = 1;
-
-	if (Height < -0.5f)
-	{
-		returningValue = -1;
-	}
-
 	return Height;
 }
 
 FVoxelMaterial FVoxelCavesWorldGeneratorInstance::GetMaterialImpl(v_flt X, v_flt Y, v_flt Z, int32 LOD, const FVoxelItemStack& Items) const
-{
-	return FVoxelMaterial::CreateFromColor(FColor::Red);
-	// return FVoxelMaterial::CreateFromSingleIndex(0);
-	// return FVoxelMaterial::CreateFromDoubleIndex(0, 1, 0.5f);
+{ 
+	FVoxelMaterialBuilder builder;
+	builder.SetMaterialConfig(EVoxelMaterialConfig::SingleIndex);
+	builder.SetSingleIndex(1);
+	
+	if (X > 250) {
+		return builder.Build();
+	}
+
+	//builder.SetSingleIndex(1);
+
+	return FVoxelMaterial::Default(); //Just to return something
 }
 
 TVoxelRange<v_flt> FVoxelCavesWorldGeneratorInstance::GetValueRangeImpl(const FVoxelIntBox& Bounds, int32 LOD, const FVoxelItemStack& Items) const

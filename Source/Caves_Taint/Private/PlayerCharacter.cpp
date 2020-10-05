@@ -44,9 +44,10 @@ APlayerCharacter::APlayerCharacter()
 		characterView = CreateDefaultSubobject<UCameraComponent>(TEXT("CameraComp"));
 		characterView->AttachToComponent(GetMesh(), FAttachmentTransformRules::KeepRelativeTransform, "head");//FName("head"), EAttachLocation::KeepRelativeOffset, true);
 		characterView->AddRelativeRotation(FRotator(180.0f, -90.0f, 90.0f));
-		characterView->bUsePawnControlRotation = false;
-		bUseControllerRotationPitch = true;
+		characterView->bUsePawnControlRotation = true;
+		//bUseControllerRotationPitch = true;
 		characterView->bLockToHmd = true;
+		
 		
 	}
 
@@ -137,6 +138,7 @@ void APlayerCharacter::turnVertical(float value)
 {
 	if (!isGuiOpen)
 	{
+		//GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Yellow, FString::Printf(TEXT("Pitch: %f"), value));
 		APlayerCharacter::AddControllerPitchInput(value);
 	}
 }
@@ -208,8 +210,6 @@ void APlayerCharacter::action()
 {
 	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("Test"));
 
-	characterView->GetComponentLocation();
-	characterView->GetForwardVector();
 
 	FHitResult hitResult;
 	GetWorld()->LineTraceSingleByChannel(hitResult, characterView->GetComponentLocation(), characterView->GetForwardVector() * 1000.0f + characterView->GetComponentLocation(), ECC_Visibility);
@@ -218,6 +218,10 @@ void APlayerCharacter::action()
 	AVoxelWorld* voxelWorldReference = nullptr;
 
 	voxelWorldReference = Cast<AVoxelWorld>(hitResult.Actor);
-	UVoxelSphereTools::RemoveSphere(voxelWorldReference, hitResult.Location, 100.0f);
-	UVoxelSphereTools::SmoothSphere(voxelWorldReference, hitResult.Location, 100.0f, 0.5f);
+
+	if (voxelWorldReference != nullptr)
+	{
+		UVoxelSphereTools::RemoveSphere(voxelWorldReference, hitResult.Location, 10.0f);
+		UVoxelSphereTools::SmoothSphere(voxelWorldReference, hitResult.Location, 20.0f, 1.0f);
+	}
 }
