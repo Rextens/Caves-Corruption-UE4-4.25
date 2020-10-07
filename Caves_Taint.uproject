@@ -10,7 +10,9 @@
 			"LoadingPhase": "Default",
 			"AdditionalDependencies": [
 				"Voxel",
-				"Engine"
+				"Engine",
+				"UMG",
+				"CoreUObject"
 			]
 		}
 	],

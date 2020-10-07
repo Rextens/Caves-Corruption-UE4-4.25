@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
 #include "Camera/CameraComponent.h"
+#include "Item.h"
 #include "PlayerCharacter.generated.h"
 
 UCLASS()
@@ -47,6 +48,9 @@ public:
 
 	UPROPERTY(VisibleAnywhere, Category = SkeletalMesh)
 		USkeletalMeshComponent* characterMesh;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		TArray<UItem*> itemsInEquipment;
 
 	//My function
 

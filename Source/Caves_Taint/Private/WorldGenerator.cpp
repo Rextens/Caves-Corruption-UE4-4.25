@@ -23,7 +23,7 @@ void FVoxelCavesWorldGeneratorInstance::Init(const FVoxelWorldGeneratorInit& Ini
 
 v_flt FVoxelCavesWorldGeneratorInstance::GetValueImpl(v_flt X, v_flt Y, v_flt Z, int32 LOD, const FVoxelItemStack& Items) const
 {
-	const float Height = Noise.GetPerlin_3D(X, Y, Z, 0.01f);
+	const float Height = Noise.GetPerlin_3D(X * 0.01f, Y * 0.01f, Z * 0.02f, 0.01f);
 
 	return Height;
 }

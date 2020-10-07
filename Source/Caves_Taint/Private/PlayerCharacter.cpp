@@ -1,12 +1,13 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
+#include "PlayerCharacter.h"
 #include "UObject/Class.h"
 #include "Engine/World.h"
 #include "DrawDebugHelpers.h"
 #include "VoxelWorldGenerators/VoxelWorldGeneratorHelpers.h"
 #include "VoxelTools/Gen/VoxelSphereTools.h"
 #include "VoxelWorld.h"
-#include "PlayerCharacter.h"
+
 
 
 // Sets default values
@@ -208,20 +209,23 @@ void APlayerCharacter::hideHUD()
 
 void APlayerCharacter::action()
 {
-	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("Test"));
-
-
-	FHitResult hitResult;
-	GetWorld()->LineTraceSingleByChannel(hitResult, characterView->GetComponentLocation(), characterView->GetForwardVector() * 1000.0f + characterView->GetComponentLocation(), ECC_Visibility);
-	DrawDebugLine(GetWorld(), characterView->GetComponentLocation(), characterView->GetForwardVector() * 1000.0f + characterView->GetComponentLocation(), FColor::Red, false, 2.0f);
-
-	AVoxelWorld* voxelWorldReference = nullptr;
-
-	voxelWorldReference = Cast<AVoxelWorld>(hitResult.Actor);
-
-	if (voxelWorldReference != nullptr)
+	if (!isGuiOpen)
 	{
-		UVoxelSphereTools::RemoveSphere(voxelWorldReference, hitResult.Location, 10.0f);
-		UVoxelSphereTools::SmoothSphere(voxelWorldReference, hitResult.Location, 20.0f, 1.0f);
+		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("Test"));
+
+
+		FHitResult hitResult;
+		GetWorld()->LineTraceSingleByChannel(hitResult, characterView->GetComponentLocation(), characterView->GetForwardVector() * 1000.0f + characterView->GetComponentLocation(), ECC_Visibility);
+		DrawDebugLine(GetWorld(), characterView->GetComponentLocation(), characterView->GetForwardVector() * 1000.0f + characterView->GetComponentLocation(), FColor::Red, false, 2.0f);
+
+		AVoxelWorld* voxelWorldReference = nullptr;
+
+		voxelWorldReference = Cast<AVoxelWorld>(hitResult.Actor);
+
+		if (voxelWorldReference != nullptr)
+		{
+			UVoxelSphereTools::RemoveSphere(voxelWorldReference, hitResult.Location, 10.0f);
+			UVoxelSphereTools::SmoothSphere(voxelWorldReference, hitResult.Location, 20.0f, 1.0f);
+		}
 	}
 }
