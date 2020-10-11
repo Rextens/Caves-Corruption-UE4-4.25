@@ -15,7 +15,7 @@ class CAVES_TAINT_API APlayerCharacter : public ACharacter
 
 public:
 	// Sets default values for this character's properties
-	APlayerCharacter();
+	APlayerCharacter(const FObjectInitializer& objectInitializer);
 
 protected:
 	// Called when the game starts or when spawned
@@ -51,6 +51,12 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		TArray<UItem*> itemsInEquipment;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		UItem* leftHand = nullptr;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		UItem* rightHand = nullptr;
 
 	//My function
 

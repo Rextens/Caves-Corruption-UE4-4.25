@@ -23,8 +23,10 @@ void FVoxelCavesWorldGeneratorInstance::Init(const FVoxelWorldGeneratorInit& Ini
 
 v_flt FVoxelCavesWorldGeneratorInstance::GetValueImpl(v_flt X, v_flt Y, v_flt Z, int32 LOD, const FVoxelItemStack& Items) const
 {
-	const float Height = Noise.GetPerlin_3D(X * 0.01f, Y * 0.01f, Z * 0.02f, 0.01f);
+	//const float Height = Noise.GetPerlin_3D(X * 0.01f, Y * 0.01f, Z * 0.02f, 1.0f);
 
+	const float Height = Noise.GetValueFractal_3D(X * 0.01f, Y * 0.01f, Z * 0.01f, 1.0f, 12);// * Noise.GetValueFractal_3D(X, Y, Z, 0.02f, 6);
+	
 	return Height;
 }
 
@@ -33,8 +35,8 @@ FVoxelMaterial FVoxelCavesWorldGeneratorInstance::GetMaterialImpl(v_flt X, v_flt
 	FVoxelMaterialBuilder builder;
 	builder.SetMaterialConfig(EVoxelMaterialConfig::SingleIndex);
 	builder.SetSingleIndex(1);
-	
-	if (X > 250) {
+
+	if (Noise.GetCellular_3D(X, Y, Z, 0.001f) < 0.5f) {
 		return builder.Build();
 	}
 

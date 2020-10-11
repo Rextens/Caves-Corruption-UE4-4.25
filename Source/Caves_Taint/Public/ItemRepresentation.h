@@ -10,6 +10,11 @@
 /**
  * 
  */
+
+class X {
+
+};
+
 UCLASS()
 class CAVES_TAINT_API UItemRepresentation : public UUserWidget
 {
@@ -17,6 +22,11 @@ class CAVES_TAINT_API UItemRepresentation : public UUserWidget
 
 public:
 	
+	UItemRepresentation(const FObjectInitializer& objectInitializer);
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		UItem* item;
+
+	UFUNCTION(BlueprintCallable)
+		void createItem();
 };
