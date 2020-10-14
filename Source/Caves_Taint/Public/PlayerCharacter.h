@@ -89,4 +89,7 @@ public:
 
 	UFUNCTION()
 		void action();
+
+	UFUNCTION()
+		void placeItem();
 };

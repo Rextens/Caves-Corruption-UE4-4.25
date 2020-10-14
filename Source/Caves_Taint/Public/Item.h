@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "UObject/NoExportTypes.h"
+#include "PlacedRock.h"
 #include "Item.generated.h"
 
 /**
@@ -19,4 +20,7 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		FName itemName;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		UClass* placedItemClass;
 };

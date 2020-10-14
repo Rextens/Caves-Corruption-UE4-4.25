@@ -6,6 +6,7 @@
 #include "DrawDebugHelpers.h"
 #include "VoxelWorldGenerators/VoxelWorldGeneratorHelpers.h"
 #include "VoxelTools/Gen/VoxelSphereTools.h"
+#include "PlacedRock.h"
 #include "VoxelWorld.h"
 
 
@@ -89,6 +90,7 @@ void APlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCom
 	PlayerInputComponent->BindAction("Open/Close Gui", IE_Pressed, this, &APlayerCharacter::openEquipment);
 
 	PlayerInputComponent->BindAction("Action", IE_Pressed, this, &APlayerCharacter::action);
+	PlayerInputComponent->BindAction("Action2", IE_Pressed, this, &APlayerCharacter::placeItem);
 }
 
 void APlayerCharacter::PostInitializeComponents() {
@@ -211,9 +213,6 @@ void APlayerCharacter::action()
 {
 	if (!isGuiOpen)
 	{
-		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("Test"));
-
-
 		FHitResult hitResult;
 		GetWorld()->LineTraceSingleByChannel(hitResult, characterView->GetComponentLocation(), characterView->GetForwardVector() * 1000.0f + characterView->GetComponentLocation(), ECC_Visibility);
 		DrawDebugLine(GetWorld(), characterView->GetComponentLocation(), characterView->GetForwardVector() * 1000.0f + characterView->GetComponentLocation(), FColor::Red, false, 2.0f);
@@ -226,6 +225,23 @@ void APlayerCharacter::action()
 		{
 			UVoxelSphereTools::RemoveSphere(voxelWorldReference, hitResult.Location, 10.0f);
 			UVoxelSphereTools::SmoothSphere(voxelWorldReference, hitResult.Location, 20.0f, 1.0f);
+
+			itemsInEquipment.Add(NewObject<UItem>());
 		}
+	}
+}
+
+void APlayerCharacter::placeItem()
+{
+	if (!isGuiOpen && leftHand != nullptr)
+	{
+		FHitResult hitResult;
+		GetWorld()->LineTraceSingleByChannel(hitResult, characterView->GetComponentLocation(), characterView->GetForwardVector() * 1000.0f + characterView->GetComponentLocation(), ECC_Visibility);
+		DrawDebugLine(GetWorld(), characterView->GetComponentLocation(), characterView->GetForwardVector() * 1000.0f + characterView->GetComponentLocation(), FColor::Red, false, 2.0f);
+
+		FRotator Rotation(0.0f, 0.0f, 0.0f);
+		FActorSpawnParameters SpawnInfo;
+		
+		GetWorld()->SpawnActor<APlacedItem>(leftHand->placedItemClass, hitResult.Location, Rotation, SpawnInfo);
 	}
 }

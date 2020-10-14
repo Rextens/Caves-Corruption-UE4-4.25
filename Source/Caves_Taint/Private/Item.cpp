@@ -7,4 +7,5 @@
 UItem::UItem()
 {
 	itemName = "notNUll";
+	placedItemClass = APlacedRock::StaticClass();
 }

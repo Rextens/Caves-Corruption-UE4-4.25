@@ -2,6 +2,7 @@
 
 
 #include "ItemRepresentation.h"
+#include "PlacedRock.h"
 
 UItemRepresentation::UItemRepresentation(const FObjectInitializer& objectInitializer) : Super(objectInitializer)
 {
@@ -11,4 +12,5 @@ UItemRepresentation::UItemRepresentation(const FObjectInitializer& objectInitial
 void UItemRepresentation::createItem()
 {
 	item = NewObject<UItem>();
+	//item->placedItemClass = APlacedRock::StaticClass();
 }
