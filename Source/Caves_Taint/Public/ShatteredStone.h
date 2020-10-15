@@ -3,16 +3,17 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Blueprint/UserWidget.h"
-#include "Components/Image.h"
-#include "ToolBar.generated.h"
+#include "StackableItem.h"
+#include "ShatteredStone.generated.h"
 
 /**
  * 
  */
 UCLASS()
-class CAVES_TAINT_API UToolBar : public UUserWidget
+class CAVES_TAINT_API UShatteredStone : public UStackableItem
 {
 	GENERATED_BODY()
-
+	
+public:
+	UShatteredStone();
 };

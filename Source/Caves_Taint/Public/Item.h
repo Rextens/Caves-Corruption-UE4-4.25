@@ -23,4 +23,13 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		UClass* placedItemClass;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		bool isInTheItemBar;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		bool stackable;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		int32 itemID = 0;
 };

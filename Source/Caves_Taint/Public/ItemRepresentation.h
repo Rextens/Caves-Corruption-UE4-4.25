@@ -26,7 +26,4 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		UItem* item;
-
-	UFUNCTION(BlueprintCallable)
-		void createItem();
 };

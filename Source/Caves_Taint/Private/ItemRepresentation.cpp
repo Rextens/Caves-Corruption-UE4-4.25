@@ -8,9 +8,3 @@ UItemRepresentation::UItemRepresentation(const FObjectInitializer& objectInitial
 {
 
 }
-
-void UItemRepresentation::createItem()
-{
-	item = NewObject<UItem>();
-	//item->placedItemClass = APlacedRock::StaticClass();
-}

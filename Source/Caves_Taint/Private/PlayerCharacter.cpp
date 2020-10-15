@@ -226,14 +226,15 @@ void APlayerCharacter::action()
 			UVoxelSphereTools::RemoveSphere(voxelWorldReference, hitResult.Location, 10.0f);
 			UVoxelSphereTools::SmoothSphere(voxelWorldReference, hitResult.Location, 20.0f, 1.0f);
 
-			itemsInEquipment.Add(NewObject<UItem>());
+			itemsInEquipment.Add(NewObject<UShatteredStone>());
+			addItemToEquipment<UShatteredStone>();
 		}
 	}
 }
 
 void APlayerCharacter::placeItem()
 {
-	if (!isGuiOpen && leftHand != nullptr)
+	if (!isGuiOpen && itemsInToolBar[selectedItem]->placedItemClass != nullptr)
 	{
 		FHitResult hitResult;
 		GetWorld()->LineTraceSingleByChannel(hitResult, characterView->GetComponentLocation(), characterView->GetForwardVector() * 1000.0f + characterView->GetComponentLocation(), ECC_Visibility);
@@ -242,6 +243,6 @@ void APlayerCharacter::placeItem()
 		FRotator Rotation(0.0f, 0.0f, 0.0f);
 		FActorSpawnParameters SpawnInfo;
 		
-		GetWorld()->SpawnActor<APlacedItem>(leftHand->placedItemClass, hitResult.Location, Rotation, SpawnInfo);
+		GetWorld()->SpawnActor<APlacedItem>(itemsInToolBar[selectedItem]->placedItemClass, hitResult.Location, Rotation, SpawnInfo);
 	}
 }

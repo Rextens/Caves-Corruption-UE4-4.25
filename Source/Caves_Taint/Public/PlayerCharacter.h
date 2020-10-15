@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+ // Fill out your copyright notice in the Description page of Project Settings.
 
 #pragma once
 
@@ -6,6 +6,7 @@
 #include "GameFramework/Character.h"
 #include "Camera/CameraComponent.h"
 #include "Item.h"
+#include "ShatteredStone.h"
 #include "PlayerCharacter.generated.h"
 
 UCLASS()
@@ -53,10 +54,16 @@ public:
 		TArray<UItem*> itemsInEquipment;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		TArray<UItem*> itemsInToolBar;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		UItem* leftHand = nullptr;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		UItem* rightHand = nullptr;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		int32 selectedItem = 0;
 
 	//My function
 
@@ -92,4 +99,20 @@ public:
 
 	UFUNCTION()
 		void placeItem();
+
+		template<class ItemClass> void addItemToEquipment()
+		{
+			ItemClass* createdItem = NewObject<ItemClass>();
+
+			UStackableItem* stackable = Cast<UStackableItem>(createdItem);
+
+			if (stackable)
+			{
+				GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("stackable"));
+			}
+			else
+			{
+				GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("stackable"));
+			}
+		}
 };
