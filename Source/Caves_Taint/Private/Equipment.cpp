@@ -3,3 +3,7 @@
 
 #include "Equipment.h"
 
+UStackableItem* UEquipment::getStackableReferenceInstead(UItem* item)
+{
+	return Cast<UStackableItem>(item); 
+}

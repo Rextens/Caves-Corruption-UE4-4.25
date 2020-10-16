@@ -100,6 +100,9 @@ public:
 	UFUNCTION()
 		void placeItem();
 
+		int32 isInTheInventory(FName itemID);
+		int32 isInTheToolBar(FName itemID);
+
 		template<class ItemClass> void addItemToEquipment()
 		{
 			ItemClass* createdItem = NewObject<ItemClass>();
@@ -108,11 +111,29 @@ public:
 
 			if (stackable)
 			{
-				GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("stackable"));
+				int32 toolBarIndex = isInTheToolBar(stackable->itemName);
+
+				if (toolBarIndex == -1)
+				{
+					int32 equipmentIndex = isInTheInventory(stackable->itemName);
+
+					if (equipmentIndex == -1)
+					{
+						itemsInEquipment.Add(stackable);
+					}
+					else
+					{
+						Cast<UStackableItem>(itemsInEquipment[equipmentIndex])->stack += 1;
+					}
+				}
+				else
+				{
+					Cast<UStackableItem>(itemsInToolBar[toolBarIndex])->stack += 1;
+				}
 			}
 			else
 			{
-				GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("stackable"));
+				GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("not stackable"));
 			}
 		}
 };

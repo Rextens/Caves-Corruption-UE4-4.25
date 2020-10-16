@@ -5,5 +5,6 @@
 
 UShatteredStone::UShatteredStone()
 {
+	itemName = "0_Shattered Stone";
 	stackable = true;
 }

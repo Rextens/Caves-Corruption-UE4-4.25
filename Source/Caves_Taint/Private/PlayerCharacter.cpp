@@ -226,7 +226,7 @@ void APlayerCharacter::action()
 			UVoxelSphereTools::RemoveSphere(voxelWorldReference, hitResult.Location, 10.0f);
 			UVoxelSphereTools::SmoothSphere(voxelWorldReference, hitResult.Location, 20.0f, 1.0f);
 
-			itemsInEquipment.Add(NewObject<UShatteredStone>());
+			//itemsInEquipment.Add(NewObject<UShatteredStone>());
 			addItemToEquipment<UShatteredStone>();
 		}
 	}
@@ -234,15 +234,46 @@ void APlayerCharacter::action()
 
 void APlayerCharacter::placeItem()
 {
-	if (!isGuiOpen && itemsInToolBar[selectedItem]->placedItemClass != nullptr)
+	if (selectedItem < itemsInToolBar.Num())
 	{
-		FHitResult hitResult;
-		GetWorld()->LineTraceSingleByChannel(hitResult, characterView->GetComponentLocation(), characterView->GetForwardVector() * 1000.0f + characterView->GetComponentLocation(), ECC_Visibility);
-		DrawDebugLine(GetWorld(), characterView->GetComponentLocation(), characterView->GetForwardVector() * 1000.0f + characterView->GetComponentLocation(), FColor::Red, false, 2.0f);
+		if (!isGuiOpen && itemsInToolBar[selectedItem]->placedItemClass != nullptr)
+		{
+			FHitResult hitResult;
+			GetWorld()->LineTraceSingleByChannel(hitResult, characterView->GetComponentLocation(), characterView->GetForwardVector() * 1000.0f + characterView->GetComponentLocation(), ECC_Visibility);
+			DrawDebugLine(GetWorld(), characterView->GetComponentLocation(), characterView->GetForwardVector() * 1000.0f + characterView->GetComponentLocation(), FColor::Red, false, 2.0f);
 
-		FRotator Rotation(0.0f, 0.0f, 0.0f);
-		FActorSpawnParameters SpawnInfo;
-		
-		GetWorld()->SpawnActor<APlacedItem>(itemsInToolBar[selectedItem]->placedItemClass, hitResult.Location, Rotation, SpawnInfo);
+			FRotator Rotation(0.0f, 0.0f, 0.0f);
+			FActorSpawnParameters SpawnInfo;
+
+			GetWorld()->SpawnActor<APlacedItem>(itemsInToolBar[selectedItem]->placedItemClass, hitResult.Location, Rotation, SpawnInfo);
+		}
 	}
 }
+
+int32 APlayerCharacter::isInTheInventory(FName itemID)
+{
+	for (int i = 0; i < itemsInEquipment.Num(); ++i)
+	{
+		if (itemsInEquipment[i]->itemName == itemID)
+		{
+			return i;
+		}
+	}
+
+	return -1;
+}
+
+int32 APlayerCharacter::isInTheToolBar(FName itemID)
+{
+	
+	for (int i = 0; i < itemsInToolBar.Num(); ++i)
+	{
+		if (itemsInToolBar[i]->itemName == itemID)
+		{
+			return i;
+		}
+	}
+
+	return -1;
+}
+

@@ -29,7 +29,4 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		bool stackable;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-		int32 itemID = 0;
 };

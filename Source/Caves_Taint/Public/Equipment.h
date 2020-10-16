@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
+#include "StackableItem.h"
 #include "Equipment.generated.h"
 
 /**
@@ -13,5 +14,8 @@ UCLASS()
 class CAVES_TAINT_API UEquipment : public UUserWidget
 {
 	GENERATED_BODY()
-	
+
+public:
+	UFUNCTION(BlueprintCallable)
+		UStackableItem* getStackableReferenceInstead(UItem *item);
 };
