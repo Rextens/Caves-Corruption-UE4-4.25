@@ -2,12 +2,60 @@
 
 
 #include "WorldGenerator.h"
+#include <ctime>
+#include "VoxelTools/VoxelDataTools.h"
 #include "VoxelMaterialBuilder.h"
 
 TVoxelSharedRef<FVoxelWorldGeneratorInstance> UWorldGenerator::GetInstance()
 {
 	return MakeVoxelShared<FVoxelCavesWorldGeneratorInstance>(*this);
+
+	
 }
+/*
+AdditionalGenerations::AdditionalGenerations()
+{
+
+}
+
+AdditionalGenerations::AdditionalGenerations(const AVoxelWorld* worldReference)
+{
+	ref = worldReference;
+}
+
+void AdditionalGenerations::generatePerlinWorms(const float& X, const float& Y, const float& Z, const int& interval, const int& range, FVoxelFastNoise &PerlinWormsNoise)
+{
+	if (ref != nullptr)
+	{
+		TArray<FVector> vectors;
+
+		for (int i = 0; i < interval; ++i) {
+			vectors.Add(FVector(PerlinWormsNoise.GetPerlin_3D(X + 0.5f + i, Y + 0.5f, Z + 0.5f, 3.02f) * 360.0f, PerlinWormsNoise.GetPerlin_3D(X + 0.5f + i, Y + 0.5f, Z + 1.5f, 3.02f) * 360.0f, PerlinWormsNoise.GetPerlin_3D(X + 0.5f + i, Y + 0.5f, Z + 2.5f, 3.02f) * 360.0f));
+		}
+
+		for (int i = 0; i < interval; ++i) {
+			for (int j = 0; j < range; ++j) {
+				UVoxelDataTools::SetMaterial((AVoxelWorld*)ref, FIntVector(1, 2, 3), )
+			}
+		}
+	}
+}
+
+void AdditionalGenerations::setMaterialInArea(const FVector& start, const FVector& end, const int& range)
+{
+	FVoxelMaterialBuilder builder;
+	builder.SetMaterialConfig(EVoxelMaterialConfig::SingleIndex);
+	builder.SetSingleIndex(2);
+
+	for (int i = 0; i < 10000; ++i) {
+		for (int j = 0; j < 10000; ++j) {
+			for (int k = 0; k < 10000; ++k) {
+				UVoxelDataTools::SetMaterial((AVoxelWorld*)ref, FIntVector(i, j, k), )
+			}
+		}
+	}
+}
+*/
 
 ///////////////////////////////////////////////////////////////////////////////
 
@@ -18,15 +66,23 @@ FVoxelCavesWorldGeneratorInstance::FVoxelCavesWorldGeneratorInstance(UWorldGener
 void FVoxelCavesWorldGeneratorInstance::Init(const FVoxelWorldGeneratorInit& InitStruct)
 {
 	static const FName SeedName = "MySeed";
-	Noise.SetSeed(InitStruct.Seeds.Contains(SeedName) ? InitStruct.Seeds[SeedName] : 1337);
+	srand(time(nullptr));
+	Noise.SetSeed(InitStruct.Seeds.Contains(SeedName) ? InitStruct.Seeds[SeedName] : rand());
+	seed = Noise.GetSeed();
+
+	//worldReference;
+
+	PerlinWormsNoise.SetSeed(seed / 2);
 }
 
 v_flt FVoxelCavesWorldGeneratorInstance::GetValueImpl(v_flt X, v_flt Y, v_flt Z, int32 LOD, const FVoxelItemStack& Items) const
 {
 	//const float Height = Noise.GetPerlin_3D(X * 0.01f, Y * 0.01f, Z * 0.02f, 1.0f);
 
-	const float Height = Noise.GetValueFractal_3D(X * 0.01f, Y * 0.01f, Z * 0.01f, 1.0f, 12);// * Noise.GetValueFractal_3D(X, Y, Z, 0.02f, 6);
-	
+	const float Height = Noise.GetValueFractal_3D(X * 0.01f, Y * 0.01f, Z * 0.01f, 1.2f, 12);// * Noise.GetValueFractal_3D(X, Y, Z, 0.02f, 6);
+
+	//VoxelBuffer::bufferFunction(Height);
+
 	return Height;
 }
 
@@ -34,11 +90,33 @@ FVoxelMaterial FVoxelCavesWorldGeneratorInstance::GetMaterialImpl(v_flt X, v_flt
 { 
 	FVoxelMaterialBuilder builder;
 	builder.SetMaterialConfig(EVoxelMaterialConfig::SingleIndex);
-	builder.SetSingleIndex(1);
+	
+	if (Noise.GetCellular_3D(X + 0.5f, Y + 0.5f, Z + 0.5f, 0.001f) < 0.5f) {
+		builder.SetSingleIndex(0);
+	}
+	else {
+		builder.SetSingleIndex(1);
+	}
 
+	if (Noise.GetValueFractal_3D(X * 0.07f + 0.5f, Y * 0.07f + 0.5f, Z * 0.07f + 0.5f, 1.0f, 1) > 0.9f) {
+		builder.SetSingleIndex(2);
+ 
+
+	}
+
+	return builder.Build();
+
+	/*
+	if (Noise.GetPerlin_3D(X, Y, Z, 1.0f) < 0.9) {
+		builder.SetSingleIndex(1);
+	}
+	else {
+		builder.SetSingleIndex(2);
+	}
 	if (Noise.GetCellular_3D(X, Y, Z, 0.001f) < 0.5f) {
 		return builder.Build();
 	}
+	*/
 
 	//builder.SetSingleIndex(1);
 
@@ -71,3 +149,4 @@ FVector FVoxelCavesWorldGeneratorInstance::GetUpVector(v_flt X, v_flt Y, v_flt Z
 	// Used by spawners
 	return FVector::UpVector;
 }
+

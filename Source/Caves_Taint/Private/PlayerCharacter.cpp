@@ -5,7 +5,6 @@
 #include "Engine/World.h"
 #include "DrawDebugHelpers.h"
 #include "VoxelWorldGenerators/VoxelWorldGeneratorHelpers.h"
-#include "VoxelTools/Gen/VoxelSphereTools.h"
 #include "PlacedRock.h"
 #include "VoxelWorld.h"
 
@@ -49,8 +48,8 @@ APlayerCharacter::APlayerCharacter(const FObjectInitializer& objectInitializer) 
 		characterView->bUsePawnControlRotation = true;
 		//bUseControllerRotationPitch = true;
 		characterView->bLockToHmd = true;
-		
-		
+
+		noise::module::Perlin myModule;
 	}
 
 	//GetMesh()
@@ -61,6 +60,7 @@ void APlayerCharacter::BeginPlay()
 {
 	Super::BeginPlay();
 	
+	addItemToEquipment<UStackableItem>("Bioprogrammator", ABioProgrammator::StaticClass());
 
 }
 
@@ -209,6 +209,22 @@ void APlayerCharacter::hideHUD()
 	*/
 }
 
+void APlayerCharacter::materialsInSphere(TArray<FModifiedVoxelValue> &modifiedValues, AVoxelWorld *voxelWorldReference)
+{
+	for (int i = 0; i < modifiedValues.Num(); ++i) {
+		FVoxelMaterial gettedMaterial;
+		UVoxelDataTools::GetMaterial(gettedMaterial, voxelWorldReference, modifiedValues[i].Position);
+	
+		if (gettedMaterial.GetSingleIndex() == 0 || gettedMaterial.GetSingleIndex() == 1) {
+			addItemToEquipment<UStackableItem>("0_Shattered Stone", nullptr);
+		}
+		else if(gettedMaterial.GetSingleIndex() == 2)
+		{
+			addItemToEquipment<UStackableItem>("1_Selfprogrammable Ore", nullptr);
+		}
+	}
+}
+
 void APlayerCharacter::action()
 {
 	if (!isGuiOpen)
@@ -222,12 +238,13 @@ void APlayerCharacter::action()
 		voxelWorldReference = Cast<AVoxelWorld>(hitResult.Actor);
 
 		if (voxelWorldReference != nullptr)
-		{
-			UVoxelSphereTools::RemoveSphere(voxelWorldReference, hitResult.Location, 10.0f);
-			UVoxelSphereTools::SmoothSphere(voxelWorldReference, hitResult.Location, 20.0f, 1.0f);
+		{			
+			TArray<FModifiedVoxelValue> modifiedValues;
 
-			//itemsInEquipment.Add(NewObject<UShatteredStone>());
-			addItemToEquipment<UShatteredStone>();
+			
+			UVoxelSphereTools::RemoveSphere(voxelWorldReference, hitResult.Location, 20.0f, &modifiedValues);
+			UVoxelSphereTools::SmoothSphere(voxelWorldReference, hitResult.Location, 20.0f, 1.0f);
+			materialsInSphere(modifiedValues, voxelWorldReference);
 		}
 	}
 }
@@ -242,10 +259,19 @@ void APlayerCharacter::placeItem()
 			GetWorld()->LineTraceSingleByChannel(hitResult, characterView->GetComponentLocation(), characterView->GetForwardVector() * 1000.0f + characterView->GetComponentLocation(), ECC_Visibility);
 			DrawDebugLine(GetWorld(), characterView->GetComponentLocation(), characterView->GetForwardVector() * 1000.0f + characterView->GetComponentLocation(), FColor::Red, false, 2.0f);
 
-			FRotator Rotation(0.0f, 0.0f, 0.0f);
-			FActorSpawnParameters SpawnInfo;
+			AActiveableItem* activeable = Cast<AActiveableItem>(hitResult.Actor);
 
-			GetWorld()->SpawnActor<APlacedItem>(itemsInToolBar[selectedItem]->placedItemClass, hitResult.Location, Rotation, SpawnInfo);
+			if (!activeable)
+			{
+				FRotator Rotation(0.0f, 0.0f, 0.0f);
+				FActorSpawnParameters SpawnInfo;
+
+				GetWorld()->SpawnActor<APlacedItem>(itemsInToolBar[selectedItem]->placedItemClass, hitResult.Location, Rotation, SpawnInfo);
+			}
+			else
+			{
+				activeable->activation();
+			}
 		}
 	}
 }

@@ -2,3 +2,8 @@
 
 
 #include "StackableItem.h"
+
+UStackableItem::UStackableItem()
+{
+	stackable = true;
+}

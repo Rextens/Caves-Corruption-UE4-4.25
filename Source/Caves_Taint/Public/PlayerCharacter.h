@@ -6,7 +6,13 @@
 #include "GameFramework/Character.h"
 #include "Camera/CameraComponent.h"
 #include "Item.h"
-#include "ShatteredStone.h"
+#include "noise.h"
+#include "VoxelTools/Gen/VoxelSphereTools.h"
+#include "VoxelTools/VoxelDataTools.h"
+#include "VoxelData/VoxelData.h"
+#include "BioProgrammator.h"
+#include "StackableItem.h"
+#include <map>
 #include "PlayerCharacter.generated.h"
 
 UCLASS()
@@ -65,6 +71,9 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		int32 selectedItem = 0;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		TArray<UUserWidget*> currentlyOpenUIs;
+
 	//My function
 
 	UFUNCTION()
@@ -100,17 +109,25 @@ public:
 	UFUNCTION()
 		void placeItem();
 
+	UFUNCTION()
+		void materialsInSphere(TArray<FModifiedVoxelValue> &modifiedValues, AVoxelWorld* voxelWorldReference);
+
 		int32 isInTheInventory(FName itemID);
 		int32 isInTheToolBar(FName itemID);
 
-		template<class ItemClass> void addItemToEquipment()
+		std::map<int, std::map<int, std::map <int, int> > > voxelsID;
+
+		template<class ItemClass> void addItemToEquipment(FName objectID, UClass* objectClass)
 		{
 			ItemClass* createdItem = NewObject<ItemClass>();
 
-			UStackableItem* stackable = Cast<UStackableItem>(createdItem);
+			createdItem->itemName = objectID;
+			createdItem->placedItemClass = objectClass;
 
-			if (stackable)
+			if (createdItem->stackable)
 			{
+				UStackableItem* stackable = Cast<UStackableItem>(createdItem);
+
 				int32 toolBarIndex = isInTheToolBar(stackable->itemName);
 
 				if (toolBarIndex == -1)
@@ -133,7 +150,7 @@ public:
 			}
 			else
 			{
-				GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("not stackable"));
+				itemsInEquipment.Add(createdItem);
 			}
 		}
 };

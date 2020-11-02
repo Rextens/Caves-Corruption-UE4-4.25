@@ -15,6 +15,8 @@ class CAVES_TAINT_API UStackableItem : public UItem
 	GENERATED_BODY()
 
 public:
+	UStackableItem();
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		int32 stack = 0;
 };

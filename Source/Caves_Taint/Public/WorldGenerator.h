@@ -7,6 +7,9 @@
 #include "VoxelFastNoise.h"
 #include "VoxelWorldGenerators/VoxelWorldGeneratorHelpers.h"
 #include "VoxelMaterialBuilder.h"
+#include "Engine/World.h"
+#include "VoxelWorld.h"
+#include <map>
 #include "WorldGenerator.generated.h"
 
 /**
@@ -27,6 +30,21 @@ public:
 	//~ End UVoxelWorldGenerator Interface
 };
 
+/*
+class AdditionalGenerations 
+{
+public:
+	AdditionalGenerations();
+	AdditionalGenerations(const AVoxelWorld* worldReference);
+
+	const AVoxelWorld *ref;
+
+	void generatePerlinWorms(const float& X, const float& Y, const float& Z, const int& interval, const int& range, FVoxelFastNoise &PerlinWormsNoise);
+	void setMaterialInArea(const FVector& start, const FVector& end, const int& range);
+};
+
+*/
+
 class FVoxelCavesWorldGeneratorInstance : public TVoxelWorldGeneratorInstanceHelper<FVoxelCavesWorldGeneratorInstance, UWorldGenerator>
 {
 public:
@@ -44,8 +62,11 @@ public:
 
 	virtual FVector GetUpVector(v_flt X, v_flt Y, v_flt Z) const override final;
 	//~ End FVoxelWorldGeneratorInstance Interface
+	
+	int seed;
 
 private:
 	const float NoiseHeight;
 	FVoxelFastNoise Noise;
+	FVoxelFastNoise PerlinWormsNoise;
 };

@@ -3,17 +3,16 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "StackableItem.h"
-#include "ShatteredStone.generated.h"
+#include "PlacedItem.h"
+#include "ActiveableItem.generated.h"
 
 /**
  * 
  */
 UCLASS()
-class CAVES_TAINT_API UShatteredStone : public UStackableItem
+class CAVES_TAINT_API AActiveableItem : public APlacedItem
 {
 	GENERATED_BODY()
-	
 public:
-	UShatteredStone();
+	virtual void activation() {};
 };
