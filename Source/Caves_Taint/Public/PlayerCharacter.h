@@ -74,7 +74,9 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		TArray<UUserWidget*> currentlyOpenUIs;
 
-	//My function
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		bool isItemDraggableGuiOpen = false;
+	//My function 
 
 	UFUNCTION()
 		void MoveForward(float Value);
@@ -115,27 +117,25 @@ public:
 		int32 isInTheInventory(FName itemID);
 		int32 isInTheToolBar(FName itemID);
 
-		std::map<int, std::map<int, std::map <int, int> > > voxelsID;
-
-		template<class ItemClass> void addItemToEquipment(FName objectID, UClass* objectClass)
+	UFUNCTION(BlueprintCallable)
+		void addItemToEquipment(FName objectID, UClass* objectClass, bool stackable, bool splitStack = false, int32 stackAmount = 1)
 		{
-			ItemClass* createdItem = NewObject<ItemClass>();
-
-			createdItem->itemName = objectID;
-			createdItem->placedItemClass = objectClass;
-
-			if (createdItem->stackable)
+			if (stackable)
 			{
-				UStackableItem* stackable = Cast<UStackableItem>(createdItem);
+				UStackableItem* stackable = NewObject<UStackableItem>();
+
+				stackable->itemName = objectID;
+				stackable->placedItemClass = objectClass;
 
 				int32 toolBarIndex = isInTheToolBar(stackable->itemName);
 
-				if (toolBarIndex == -1)
+				if (toolBarIndex == -1 || splitStack)
 				{
 					int32 equipmentIndex = isInTheInventory(stackable->itemName);
 
-					if (equipmentIndex == -1)
+					if (equipmentIndex == -1 || splitStack)
 					{
+						stackable->stack = stackAmount;
 						itemsInEquipment.Add(stackable);
 					}
 					else
@@ -150,6 +150,11 @@ public:
 			}
 			else
 			{
+				UItem* createdItem = NewObject<UItem>();
+
+				createdItem->itemName = objectID;
+				createdItem->placedItemClass = objectClass;
+
 				itemsInEquipment.Add(createdItem);
 			}
 		}

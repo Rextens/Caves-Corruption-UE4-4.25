@@ -20,6 +20,12 @@ public:
 
 	void activation() override;
 	
-	UClass* MyWidgetClass;
+	UClass* programmatorClass;
 	UUserWidget* programmatorWidget;
+
+	UClass* equipmentClass;
+	UUserWidget* equipmentWidget;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		FString programmerText;
 };

@@ -5,20 +5,24 @@
 
 ABioProgrammator::ABioProgrammator()
 {
-	static ConstructorHelpers::FClassFinder<UUserWidget> widgetClassFinder(TEXT("/Game/Components/UI/ProgrammerInterface_BP"));
-	MyWidgetClass = widgetClassFinder.Class;
+	static ConstructorHelpers::FClassFinder<UUserWidget> programmerInterfaceClassFinder(TEXT("/Game/Components/UI/ProgrammerInterface_BP"));
+	programmatorClass = programmerInterfaceClassFinder.Class;
+
+	static ConstructorHelpers::FClassFinder<UUserWidget> equipmentClassFinder(TEXT("/Game/Components/UI/Equipment_BP"));
+	equipmentClass = equipmentClassFinder.Class;
 }
 
 void ABioProgrammator::activation()
 {
-	
-	if (MyWidgetClass != nullptr)
+	if (programmatorClass != nullptr && equipmentClass != nullptr)
 	{
-		programmatorWidget = CreateWidget<UUserWidget>(this->GetGameInstance(), MyWidgetClass);
+		programmatorWidget = CreateWidget<UUserWidget>(this->GetGameInstance(), programmatorClass);
+		equipmentWidget = CreateWidget<UUserWidget>(this->GetGameInstance(), equipmentClass);
 	
-		if (programmatorWidget != nullptr)
+		if (programmatorWidget != nullptr && equipmentWidget != nullptr)
 		{
 			programmatorWidget->AddToViewport();
+			equipmentWidget->AddToViewport();
 
 			FInputModeUIOnly InputModeData;
 
@@ -26,7 +30,9 @@ void ABioProgrammator::activation()
 			APlayerCharacter* characterReference = Cast<APlayerCharacter>(UGameplayStatics::GetPlayerCharacter(GetWorld(), 0));
 			characterReference->isGuiOpen = true;
 			characterReference->currentlyOpenUIs.Add(programmatorWidget);
-			
+			characterReference->currentlyOpenUIs.Add(equipmentWidget);
+			characterReference->isItemDraggableGuiOpen = true;
+
 			controllerReference->bShowMouseCursor = true;
 		}
 		else

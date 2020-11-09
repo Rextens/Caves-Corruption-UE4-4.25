@@ -6,6 +6,7 @@
 #include "DrawDebugHelpers.h"
 #include "VoxelWorldGenerators/VoxelWorldGeneratorHelpers.h"
 #include "PlacedRock.h"
+#include "CharacterController.h"
 #include "VoxelWorld.h"
 
 
@@ -48,8 +49,6 @@ APlayerCharacter::APlayerCharacter(const FObjectInitializer& objectInitializer) 
 		characterView->bUsePawnControlRotation = true;
 		//bUseControllerRotationPitch = true;
 		characterView->bLockToHmd = true;
-
-		noise::module::Perlin myModule;
 	}
 
 	//GetMesh()
@@ -59,9 +58,15 @@ APlayerCharacter::APlayerCharacter(const FObjectInitializer& objectInitializer) 
 void APlayerCharacter::BeginPlay()
 {
 	Super::BeginPlay();
-	
-	addItemToEquipment<UStackableItem>("Bioprogrammator", ABioProgrammator::StaticClass());
 
+	addItemToEquipment("Bioprogrammator", ABioProgrammator::StaticClass(), true, false, 10);
+	playerController = Cast<ACharacterController>(GetController());
+	
+	if (playerController)
+	{
+		playerController->bEnableClickEvents = true;
+		playerController->bEnableMouseOverEvents = true;
+	}	
 }
 
 // Called every frame
@@ -216,11 +221,11 @@ void APlayerCharacter::materialsInSphere(TArray<FModifiedVoxelValue> &modifiedVa
 		UVoxelDataTools::GetMaterial(gettedMaterial, voxelWorldReference, modifiedValues[i].Position);
 	
 		if (gettedMaterial.GetSingleIndex() == 0 || gettedMaterial.GetSingleIndex() == 1) {
-			addItemToEquipment<UStackableItem>("0_Shattered Stone", nullptr);
+			addItemToEquipment("Shattered Stone", nullptr, true, false);
 		}
 		else if(gettedMaterial.GetSingleIndex() == 2)
 		{
-			addItemToEquipment<UStackableItem>("1_Selfprogrammable Ore", nullptr);
+			addItemToEquipment("Selfprogrammable Ore", nullptr, true, false);
 		}
 	}
 }
@@ -302,4 +307,3 @@ int32 APlayerCharacter::isInTheToolBar(FName itemID)
 
 	return -1;
 }
-

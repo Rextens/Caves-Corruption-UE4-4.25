@@ -10,7 +10,7 @@
 /**
  * 
  */
-UCLASS()
+UCLASS(BlueprintType)
 class CAVES_TAINT_API UItem : public UObject
 {
 	GENERATED_BODY()
@@ -19,7 +19,7 @@ public:
 	UItem();
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-		FName itemName;
+		FName itemName; 
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		UClass* placedItemClass;
