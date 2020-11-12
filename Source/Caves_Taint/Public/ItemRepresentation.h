@@ -5,15 +5,13 @@
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
 #include "Item.h"
+#include "Kismet/GameplayStatics.h"	
+#include "PlayerCharacter.h" 
 #include "ItemRepresentation.generated.h"
 
 /**
  * 
  */
-
-class X {
-
-};
 
 UCLASS()
 class CAVES_TAINT_API UItemRepresentation : public UUserWidget
@@ -26,4 +24,7 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		UItem* item;
+
+	UFUNCTION(BlueprintCallable)
+		void addItemToToolbar();
 };

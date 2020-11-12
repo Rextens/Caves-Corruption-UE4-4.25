@@ -59,8 +59,8 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		TArray<UItem*> itemsInEquipment;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-		TArray<UItem*> itemsInToolBar;
+	//UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		//TArray<UItem*> itemsInToolBar;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		UItem* leftHand = nullptr;
@@ -114,38 +114,30 @@ public:
 	UFUNCTION()
 		void materialsInSphere(TArray<FModifiedVoxelValue> &modifiedValues, AVoxelWorld* voxelWorldReference);
 
+	UFUNCTION()
 		int32 isInTheInventory(FName itemID);
-		int32 isInTheToolBar(FName itemID);
 
 	UFUNCTION(BlueprintCallable)
 		void addItemToEquipment(FName objectID, UClass* objectClass, bool stackable, bool splitStack = false, int32 stackAmount = 1)
 		{
 			if (stackable)
 			{
-				UStackableItem* stackable = NewObject<UStackableItem>();
+				UStackableItem* stackableItem = NewObject<UStackableItem>();
 
-				stackable->itemName = objectID;
-				stackable->placedItemClass = objectClass;
+				stackableItem->itemName = objectID;
+				stackableItem->placedItemClass = objectClass;
 
-				int32 toolBarIndex = isInTheToolBar(stackable->itemName);
+				int32 equipmentIndex = isInTheInventory(stackableItem->itemName);
 
-				if (toolBarIndex == -1 || splitStack)
+				if (equipmentIndex == -1 || splitStack)
 				{
-					int32 equipmentIndex = isInTheInventory(stackable->itemName);
-
-					if (equipmentIndex == -1 || splitStack)
-					{
-						stackable->stack = stackAmount;
-						itemsInEquipment.Add(stackable);
-					}
-					else
-					{
-						Cast<UStackableItem>(itemsInEquipment[equipmentIndex])->stack += 1;
-					}
+					stackableItem->stack = stackAmount;
+					itemsInEquipment.Add(stackableItem);
+					itemsInEquipment[itemsInEquipment.Num() - 1]->equipmentIndex = itemsInEquipment.Num() - 1;
 				}
 				else
 				{
-					Cast<UStackableItem>(itemsInToolBar[toolBarIndex])->stack += 1;
+					Cast<UStackableItem>(itemsInEquipment[equipmentIndex])->stack += 1;
 				}
 			}
 			else
@@ -156,6 +148,12 @@ public:
 				createdItem->placedItemClass = objectClass;
 
 				itemsInEquipment.Add(createdItem);
+				itemsInEquipment[itemsInEquipment.Num() - 1]->equipmentIndex = itemsInEquipment.Num() - 1;
 			}
 		}
+
+		void removeItemFromEquipment(UItem* itemReference);
+
+	UFUNCTION(BlueprintCallable)
+		void updateItemIndexes();
 };

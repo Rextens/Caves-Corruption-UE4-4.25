@@ -67,6 +67,11 @@ void APlayerCharacter::BeginPlay()
 		playerController->bEnableClickEvents = true;
 		playerController->bEnableMouseOverEvents = true;
 	}	
+
+//	for (int i = 0; i < 9; ++i)
+//	{
+//		itemsInToolBar.Add(nullptr);
+//	}
 }
 
 // Called every frame
@@ -256,9 +261,9 @@ void APlayerCharacter::action()
 
 void APlayerCharacter::placeItem()
 {
-	if (selectedItem < itemsInToolBar.Num())
+	if (selectedItem < itemsInEquipment.Num() && itemsInEquipment[selectedItem] != nullptr)
 	{
-		if (!isGuiOpen && itemsInToolBar[selectedItem]->placedItemClass != nullptr)
+		if (!isGuiOpen && itemsInEquipment[selectedItem]->placedItemClass != nullptr)
 		{
 			FHitResult hitResult;
 			GetWorld()->LineTraceSingleByChannel(hitResult, characterView->GetComponentLocation(), characterView->GetForwardVector() * 1000.0f + characterView->GetComponentLocation(), ECC_Visibility);
@@ -271,7 +276,7 @@ void APlayerCharacter::placeItem()
 				FRotator Rotation(0.0f, 0.0f, 0.0f);
 				FActorSpawnParameters SpawnInfo;
 
-				GetWorld()->SpawnActor<APlacedItem>(itemsInToolBar[selectedItem]->placedItemClass, hitResult.Location, Rotation, SpawnInfo);
+				GetWorld()->SpawnActor<APlacedItem>(itemsInEquipment[selectedItem]->placedItemClass, hitResult.Location, Rotation, SpawnInfo);
 			}
 			else
 			{
@@ -294,16 +299,22 @@ int32 APlayerCharacter::isInTheInventory(FName itemID)
 	return -1;
 }
 
-int32 APlayerCharacter::isInTheToolBar(FName itemID)
+void APlayerCharacter::removeItemFromEquipment(UItem* itemReference)
 {
-	
-	for (int i = 0; i < itemsInToolBar.Num(); ++i)
+	if (itemReference->stackable)
 	{
-		if (itemsInToolBar[i]->itemName == itemID)
-		{
-			return i;
-		}
+		UStackableItem *stackableItemReference = Cast<UStackableItem>(itemReference);
 	}
+	else
+	{
 
-	return -1;
+	}
+}
+
+void APlayerCharacter::updateItemIndexes()
+{
+	for (int i = 0; i < itemsInEquipment.Num(); ++i)
+	{
+		itemsInEquipment[i]->equipmentIndex = i;
+	}
 }
