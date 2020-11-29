@@ -97,15 +97,6 @@ public:
 		void turnHorizontal(float value);
 
 	UFUNCTION()
-		void turnMouseWheel(float value);
-
-	UFUNCTION()
-		void openEquipment();
-
-	UFUNCTION()
-		void hideHUD();
-
-	UFUNCTION()
 		void action();
 
 	UFUNCTION()
@@ -116,6 +107,9 @@ public:
 
 	UFUNCTION()
 		int32 isInTheInventory(FName itemID);
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		UItem* dragItem;
 
 	UFUNCTION(BlueprintCallable)
 		void addItemToEquipment(FName objectID, UClass* objectClass, bool stackable, bool splitStack = false, int32 stackAmount = 1)
@@ -152,7 +146,17 @@ public:
 			}
 		}
 
-		void removeItemFromEquipment(UItem* itemReference);
+	UFUNCTION(BlueprintCallable)
+		void insertItemToEquipment(FName objectID, UClass* objectClass, bool stackable, int32 index, int32 stack);
+
+//	UFUNCTION(BlueprintCallable)
+//		void removeItemFromEquipment(UItem* itemReference, bool removeWholeStack = false, int32 removeMoreThanOneItem = 1);
+
+	UFUNCTION(BlueprintCallable)
+		void removeItemFromEquipment(int32 index, bool removeWholeStack = false, int32 removeMoreThanOneItem = 1);
+
+	UFUNCTION(BlueprintCallable)
+		void checkItemToRemove(int32 index);
 
 	UFUNCTION(BlueprintCallable)
 		void updateItemIndexes();

@@ -23,6 +23,8 @@ APlayerCharacter::APlayerCharacter(const FObjectInitializer& objectInitializer) 
 	static ConstructorHelpers::FObjectFinder<USkeletalMesh> testMannequin(TEXT("/Game/AnimStarterPack/UE4_Mannequin/Mesh/SK_Mannequin"));
 	//const ConstructorHelpers::FObjectFinder<UAnimationAsset> walkAnimation(TEXT("/Game/AnimStarterPack/Walk_Fwd_Rifle_Ironsights"));
 
+
+
 	if (testMannequin.Succeeded())
 	{
 		GetMesh()->SetSkeletalMesh(testMannequin.Object);
@@ -92,12 +94,12 @@ void APlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCom
 	PlayerInputComponent->BindAxis("Turn", this, &APlayerCharacter::turnHorizontal);
 	PlayerInputComponent->BindAxis("LookUp", this, &APlayerCharacter::turnVertical);
 
-	PlayerInputComponent->BindAxis("ChooseItem", this, &APlayerCharacter::turnMouseWheel);
+	//PlayerInputComponent->BindAxis("ChooseItem", this, &APlayerCharacter::turnMouseWheel);
 
 	PlayerInputComponent->BindAction("Jump", IE_Pressed, this, &APlayerCharacter::StartJump);
 	PlayerInputComponent->BindAction("Jump", IE_Released, this, &APlayerCharacter::StopJump);
 
-	PlayerInputComponent->BindAction("Open/Close Gui", IE_Pressed, this, &APlayerCharacter::openEquipment);
+	//PlayerInputComponent->BindAction("Open/Close Gui", IE_Pressed, this, &APlayerCharacter::openEquipment);
 
 	PlayerInputComponent->BindAction("Action", IE_Pressed, this, &APlayerCharacter::action);
 	PlayerInputComponent->BindAction("Action2", IE_Pressed, this, &APlayerCharacter::placeItem);
@@ -164,61 +166,6 @@ void APlayerCharacter::turnHorizontal(float value)
 	}
 }
 
-void APlayerCharacter::turnMouseWheel(float value)
-{
-	if (value != 0.0f)
-	{
-		/*
-		if (toolBar->choosenSlot + value < 0)
-		{
-			toolBar->choosenSlot = 8 + value + 1;
-		}
-		else if (toolBar->choosenSlot + value > 8)
-		{
-			toolBar->choosenSlot = -1 + value;
-		}
-		else
-		{
-			toolBar->choosenSlot += value;
-		}
-		toolBar->changeSlotInUse();
-		*/
-	}
-}
-
-void APlayerCharacter::openEquipment()
-{
-	/*
-	if (!isGuiOpen)
-	{
-		equipmentWidget->AddToViewport();
-		playerController->bShowMouseCursor = true;
-	}
-	else
-	{
-		equipmentWidget->RemoveFromParent();
-		playerController->bShowMouseCursor = false;
-	}
-
-	isGuiOpen = !isGuiOpen;
-	*/
-}
-
-void APlayerCharacter::hideHUD()
-{
-	/*
-	if (showHUD)
-	{
-		toolBar->RemoveFromParent();
-	}
-	else
-	{
-		toolBar->AddToViewport();
-	}
-	showHUD = !showHUD;
-	*/
-}
-
 void APlayerCharacter::materialsInSphere(TArray<FModifiedVoxelValue> &modifiedValues, AVoxelWorld *voxelWorldReference)
 {
 	for (int i = 0; i < modifiedValues.Num(); ++i) {
@@ -277,6 +224,8 @@ void APlayerCharacter::placeItem()
 				FActorSpawnParameters SpawnInfo;
 
 				GetWorld()->SpawnActor<APlacedItem>(itemsInEquipment[selectedItem]->placedItemClass, hitResult.Location, Rotation, SpawnInfo);
+				removeItemFromEquipment(itemsInEquipment[selectedItem]->equipmentIndex);
+				
 			}
 			else
 			{
@@ -298,16 +247,109 @@ int32 APlayerCharacter::isInTheInventory(FName itemID)
 
 	return -1;
 }
-
-void APlayerCharacter::removeItemFromEquipment(UItem* itemReference)
+/*
+void APlayerCharacter::removeItemFromEquipment(UItem* itemReference, bool removeWholeStack, int32 removeMoreThanOneItem)
 {
 	if (itemReference->stackable)
 	{
 		UStackableItem *stackableItemReference = Cast<UStackableItem>(itemReference);
+		if (removeWholeStack)
+		{
+			itemsInEquipment.RemoveAt(itemReference->equipmentIndex);
+		}
+		else
+		{
+			stackableItemReference->stack -= removeMoreThanOneItem;
+
+			if (stackableItemReference->stack == 0)
+			{
+				itemsInEquipment.RemoveAt(stackableItemReference->equipmentIndex);
+			}
+		}
 	}
 	else
 	{
+		itemsInEquipment.RemoveAt(itemReference->equipmentIndex);
+	}
 
+	updateItemIndexes();
+}
+*/
+
+void APlayerCharacter::insertItemToEquipment(FName objectID, UClass* objectClass, bool stackable, int32 index, int32 stack)
+{
+	if (stackable)
+	{
+		UStackableItem* stackableItem = NewObject<UStackableItem>();
+
+		stackableItem->itemName = objectID;
+		stackableItem->placedItemClass = objectClass;
+		stackableItem->stack = stack;
+
+		itemsInEquipment.SetNum(itemsInEquipment.Num() + 1);
+
+		for (int i = itemsInEquipment.Num() - 1; i >= index + 1; --i)
+		{
+			itemsInEquipment[i] = itemsInEquipment[i - 1];
+		}
+
+		itemsInEquipment[index] = stackableItem;
+	}
+	else
+	{
+		UItem* createdItem = NewObject<UItem>();
+		
+		createdItem->itemName = objectID;
+		createdItem->placedItemClass = objectClass;
+
+		itemsInEquipment.Add(nullptr);
+
+		for (int i = itemsInEquipment.Num(); i-- > index; )
+		{
+			itemsInEquipment[i] = itemsInEquipment[i + 1];
+		}
+
+		itemsInEquipment[index] = createdItem;
+	}
+}
+
+void APlayerCharacter::removeItemFromEquipment(int32 index, bool removeWholeStack, int32 removeMoreThanOneItem)
+{
+	if (itemsInEquipment[index]->stackable)
+	{
+		if (removeWholeStack)
+		{
+			itemsInEquipment.RemoveAt(index);
+		}
+		else
+		{
+			UStackableItem* stackableItemReference = Cast<UStackableItem>(itemsInEquipment[index]);
+			stackableItemReference->stack -= removeMoreThanOneItem;
+
+			if (stackableItemReference->stack == 0)
+			{
+				itemsInEquipment.RemoveAt(index);
+			}
+		}
+	}
+	else
+	{
+		itemsInEquipment.RemoveAt(index);
+	}
+
+	updateItemIndexes();
+}
+
+void APlayerCharacter::checkItemToRemove(int32 index)
+{
+	if (itemsInEquipment[index]->stackable)
+	{
+		UStackableItem* stackableItemReference = Cast<UStackableItem>(itemsInEquipment[index]);
+		if (stackableItemReference->stack == 0)
+		{
+			itemsInEquipment.RemoveAt(index);
+			updateItemIndexes();
+		}
 	}
 }
 
