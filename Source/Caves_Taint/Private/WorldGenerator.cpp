@@ -4,6 +4,8 @@
 #include "WorldGenerator.h"
 #include <ctime>
 #include "VoxelTools/VoxelDataTools.h"
+#include "SaveWorld.h"
+#include "Kismet/GameplayStatics.h"
 #include "VoxelMaterialBuilder.h"
 
 TVoxelSharedRef<FVoxelWorldGeneratorInstance> UWorldGenerator::GetInstance()
@@ -65,10 +67,34 @@ FVoxelCavesWorldGeneratorInstance::FVoxelCavesWorldGeneratorInstance(UWorldGener
 
 void FVoxelCavesWorldGeneratorInstance::Init(const FVoxelWorldGeneratorInit& InitStruct)
 {
-	static const FName SeedName = "MySeed";
-	srand(time(nullptr));
-	Noise.SetSeed(InitStruct.Seeds.Contains(SeedName) ? InitStruct.Seeds[SeedName] : rand());
+	USaveWorld* loadWorldInstance = Cast<USaveWorld>(UGameplayStatics::CreateSaveGameObject(USaveWorld::StaticClass()));
+	loadWorldInstance = Cast<USaveWorld>(UGameplayStatics::LoadGameFromSlot(TEXT("worldSeed"), 0));
+
+	if (loadWorldInstance)
+	{
+		Noise.SetSeed(loadWorldInstance->seed);
+	}
+	else
+	{
+		static const FName SeedName = "MySeed";
+		srand(time(nullptr));
+		Noise.SetSeed(InitStruct.Seeds.Contains(SeedName) ? InitStruct.Seeds[SeedName] : rand());
+	}
+
 	seed = Noise.GetSeed();
+
+	USaveWorld* saveWorldInstance = Cast<USaveWorld>(UGameplayStatics::CreateSaveGameObject(USaveWorld::StaticClass()));
+
+	if (saveWorldInstance)
+	{
+		saveWorldInstance->seed;
+	}
+	else
+	{
+		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("not loaded"));
+	}
+	//saveWorldInstance->seed = seed; //it crashes here
+	UGameplayStatics::SaveGameToSlot(saveWorldInstance, TEXT("worldSeed"), 0);
 
 	//worldReference;
 

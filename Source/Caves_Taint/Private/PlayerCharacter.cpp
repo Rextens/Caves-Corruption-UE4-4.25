@@ -7,6 +7,7 @@
 #include "VoxelWorldGenerators/VoxelWorldGeneratorHelpers.h"
 #include "PlacedRock.h"
 #include "NONEReference.h"
+#include "SaveWorld.h"
 #include "CharacterController.h"
 #include "VoxelWorld.h"
 
@@ -70,6 +71,17 @@ void APlayerCharacter::BeginPlay()
 		playerController->bEnableClickEvents = true;
 		playerController->bEnableMouseOverEvents = true;
 	}	
+
+	USaveWorld* saveWorldInstance = Cast<USaveWorld>(UGameplayStatics::CreateSaveGameObject(USaveWorld::StaticClass()));
+
+	if (saveWorldInstance)
+	{
+		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("loaded"));
+	}
+	else
+	{
+		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("not loaded"));
+	}
 
 //	for (int i = 0; i < 9; ++i)
 //	{

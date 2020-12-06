@@ -63,7 +63,7 @@ public:
 	virtual FVector GetUpVector(v_flt X, v_flt Y, v_flt Z) const override final;
 	//~ End FVoxelWorldGeneratorInstance Interface
 	
-	int seed;
+	int32 seed;
 
 private:
 	const float NoiseHeight;
