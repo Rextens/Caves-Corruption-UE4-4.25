@@ -12,6 +12,7 @@
 #include "VoxelData/VoxelData.h"
 #include "BioProgrammator.h"
 #include "StackableItem.h"
+#include "Equipment.h"
 #include <map>
 #include "PlayerCharacter.generated.h"
 
@@ -145,6 +146,14 @@ public:
 				itemsInEquipment[itemsInEquipment.Num() - 1]->equipmentIndex = itemsInEquipment.Num() - 1;
 			}
 		}
+	//UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	//	TSubclassOf<UEquipment> equipmentClassReference;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		UEquipment *equipment;
+
+	//UFUNCTION(BlueprintCallable)
+	//	void addItemReferenceToEquipment();
 
 	UFUNCTION(BlueprintCallable)
 		void insertItemToEquipment(FName objectID, UClass* objectClass, bool stackable, int32 index, int32 stack);

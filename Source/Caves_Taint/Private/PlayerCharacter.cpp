@@ -208,29 +208,31 @@ void APlayerCharacter::action()
 
 void APlayerCharacter::placeItem()
 {
-	if (selectedItem < itemsInEquipment.Num() && itemsInEquipment[selectedItem] != nullptr)
+	if (!isGuiOpen)
 	{
-		if (!isGuiOpen && itemsInEquipment[selectedItem]->placedItemClass != nullptr)
+		FHitResult hitResult;
+		GetWorld()->LineTraceSingleByChannel(hitResult, characterView->GetComponentLocation(), characterView->GetForwardVector() * 1000.0f + characterView->GetComponentLocation(), ECC_Visibility);
+		DrawDebugLine(GetWorld(), characterView->GetComponentLocation(), characterView->GetForwardVector() * 1000.0f + characterView->GetComponentLocation(), FColor::Red, false, 2.0f);
+
+		AActiveableItem* activeable = Cast<AActiveableItem>(hitResult.Actor);
+
+		if (!activeable)
 		{
-			FHitResult hitResult;
-			GetWorld()->LineTraceSingleByChannel(hitResult, characterView->GetComponentLocation(), characterView->GetForwardVector() * 1000.0f + characterView->GetComponentLocation(), ECC_Visibility);
-			DrawDebugLine(GetWorld(), characterView->GetComponentLocation(), characterView->GetForwardVector() * 1000.0f + characterView->GetComponentLocation(), FColor::Red, false, 2.0f);
-
-			AActiveableItem* activeable = Cast<AActiveableItem>(hitResult.Actor);
-
-			if (!activeable)
+			if (selectedItem < itemsInEquipment.Num())
 			{
-				FRotator Rotation(0.0f, 0.0f, 0.0f);
-				FActorSpawnParameters SpawnInfo;
+				if (itemsInEquipment[selectedItem]->placedItemClass != nullptr && itemsInEquipment[selectedItem] != nullptr)
+				{
+					FRotator Rotation(0.0f, 0.0f, 0.0f);
+					FActorSpawnParameters SpawnInfo;
 
-				GetWorld()->SpawnActor<APlacedItem>(itemsInEquipment[selectedItem]->placedItemClass, hitResult.Location, Rotation, SpawnInfo);
-				removeItemFromEquipment(itemsInEquipment[selectedItem]->equipmentIndex);
-				
+					GetWorld()->SpawnActor<APlacedItem>(itemsInEquipment[selectedItem]->placedItemClass, hitResult.Location, Rotation, SpawnInfo);
+					removeItemFromEquipment(itemsInEquipment[selectedItem]->equipmentIndex);
+				}
 			}
-			else
-			{
-				activeable->activation();
-			}
+		}
+		else
+		{
+			activeable->activation();
 		}
 	}
 }

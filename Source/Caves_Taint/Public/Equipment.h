@@ -18,4 +18,14 @@ class CAVES_TAINT_API UEquipment : public UUserWidget
 public:
 	UFUNCTION(BlueprintCallable)
 		UStackableItem* getStackableReferenceInstead(UItem *item);
+
+	UFUNCTION(BlueprintCallable, BlueprintImplementableEvent)
+		void addItemToDisplay(const TArray<UItem*>& VarName);
+
+		virtual void addItemToDisplay_Implementation(const TArray<UItem*>& VarName);
+
+	UFUNCTION(BlueprintCallable, BlueprintImplementableEvent)
+		void updateDisplay();
+
+		virtual void updateDisplay_Implementation();
 };
