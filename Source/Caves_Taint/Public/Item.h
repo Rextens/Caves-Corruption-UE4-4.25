@@ -22,7 +22,7 @@ public:
 		FName itemName; 
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-		UClass* placedItemClass;
+		UClass* placedItemClass = nullptr;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		bool isInTheItemBar;

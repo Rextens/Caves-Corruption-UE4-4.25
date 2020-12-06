@@ -6,6 +6,7 @@
 #include "DrawDebugHelpers.h"
 #include "VoxelWorldGenerators/VoxelWorldGeneratorHelpers.h"
 #include "PlacedRock.h"
+#include "NONEReference.h"
 #include "CharacterController.h"
 #include "VoxelWorld.h"
 
