@@ -9,12 +9,12 @@
 /**
  * 
  */
-UCLASS()
+UCLASS(Blueprintable)
 class CAVES_TAINT_API USaveWorld : public USaveGame
 {
 	GENERATED_BODY()
 public:
 
-	UPROPERTY(VisibleAnywhere, Category = Basic)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Basic)
 		int32 seed;
 };

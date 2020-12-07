@@ -68,7 +68,7 @@ FVoxelCavesWorldGeneratorInstance::FVoxelCavesWorldGeneratorInstance(UWorldGener
 void FVoxelCavesWorldGeneratorInstance::Init(const FVoxelWorldGeneratorInit& InitStruct)
 {
 	USaveWorld* loadWorldInstance = Cast<USaveWorld>(UGameplayStatics::CreateSaveGameObject(USaveWorld::StaticClass()));
-	loadWorldInstance = Cast<USaveWorld>(UGameplayStatics::LoadGameFromSlot(TEXT("worldSeed"), 0));
+	loadWorldInstance = Cast<USaveWorld>(UGameplayStatics::LoadGameFromSlot(TEXT("currentSeed"), 0));
 
 	if (loadWorldInstance)
 	{
@@ -82,7 +82,7 @@ void FVoxelCavesWorldGeneratorInstance::Init(const FVoxelWorldGeneratorInit& Ini
 	}
 
 	seed = Noise.GetSeed();
-
+	/*
 	USaveWorld* saveWorldInstance = Cast<USaveWorld>(UGameplayStatics::CreateSaveGameObject(USaveWorld::StaticClass()));
 
 	if (saveWorldInstance)
@@ -95,6 +95,8 @@ void FVoxelCavesWorldGeneratorInstance::Init(const FVoxelWorldGeneratorInit& Ini
 	}
 	//saveWorldInstance->seed = seed; //it crashes here
 	UGameplayStatics::SaveGameToSlot(saveWorldInstance, TEXT("worldSeed"), 0);
+	*/
+
 
 	//worldReference;
 
