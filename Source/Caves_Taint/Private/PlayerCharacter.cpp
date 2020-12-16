@@ -195,7 +195,7 @@ void APlayerCharacter::materialsInSphere(TArray<FModifiedVoxelValue> &modifiedVa
 	}
 }
 
-void APlayerCharacter::action()
+void APlayerCharacter::action() 
 {
 	if (!isGuiOpen)
 	{

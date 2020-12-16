@@ -6,7 +6,6 @@
 #include "GameFramework/Character.h"
 #include "Camera/CameraComponent.h"
 #include "Item.h"
-#include "noise.h"
 #include "VoxelTools/Gen/VoxelSphereTools.h"
 #include "VoxelTools/VoxelDataTools.h"
 #include "VoxelData/VoxelData.h"
@@ -38,12 +37,15 @@ public:
 	virtual void PostInitializeComponents() override;
 
 	//My variables
-	
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		bool isGuiOpen = false;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		bool showHUD = true;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		bool showItemStats = true;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		APlayerController *playerController;

@@ -8,6 +8,8 @@
 #include "VoxelWorldGenerators/VoxelWorldGeneratorHelpers.h"
 #include "VoxelMaterialBuilder.h"
 #include "Engine/World.h"
+#include "VoxelTools/VoxelDataTools.h"
+#include "VoxelData/VoxelData.h"
 #include "VoxelWorld.h"
 #include <map>
 #include "WorldGenerator.generated.h"

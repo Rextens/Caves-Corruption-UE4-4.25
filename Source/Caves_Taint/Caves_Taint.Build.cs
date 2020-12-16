@@ -9,7 +9,7 @@ public class Caves_Taint : ModuleRules
 	{
 		PCHUsage = PCHUsageMode.UseExplicitOrSharedPCHs;
 	
-		PublicDependencyModuleNames.AddRange(new string[] { "Core", "CoreUObject", "Engine", "InputCore", "Voxel", "UMG", "LibNoise" });
+		PublicDependencyModuleNames.AddRange(new string[] { "Core", "CoreUObject", "Engine", "InputCore", "Voxel", "UMG" });
 
 		PrivateDependencyModuleNames.AddRange(new string[] {  });
 

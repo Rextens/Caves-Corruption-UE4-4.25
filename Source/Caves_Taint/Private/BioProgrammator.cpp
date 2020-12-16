@@ -14,8 +14,6 @@ ABioProgrammator::ABioProgrammator()
 
 void ABioProgrammator::activation()
 {
-
-
 	if (programmatorClass != nullptr && equipmentClass != nullptr)
 	{
 		APlayerCharacter* characterReference = Cast<APlayerCharacter>(UGameplayStatics::GetPlayerCharacter(GetWorld(), 0));
@@ -36,6 +34,7 @@ void ABioProgrammator::activation()
 			characterReference->currentlyOpenUIs.Add(programmatorWidget);
 			characterReference->currentlyOpenUIs.Add(characterReference->equipment);
 			characterReference->isItemDraggableGuiOpen = true;
+			characterReference->showItemStats = false; 
 
 			controllerReference->bShowMouseCursor = true;
 		}

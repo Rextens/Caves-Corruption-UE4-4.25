@@ -3,6 +3,7 @@
 
 #include "WorldGenerator.h"
 #include <ctime>
+#include <cmath>
 #include "VoxelTools/VoxelDataTools.h"
 #include "SaveWorld.h"
 #include "Kismet/GameplayStatics.h"
@@ -14,50 +15,6 @@ TVoxelSharedRef<FVoxelWorldGeneratorInstance> UWorldGenerator::GetInstance()
 
 	
 }
-/*
-AdditionalGenerations::AdditionalGenerations()
-{
-
-}
-
-AdditionalGenerations::AdditionalGenerations(const AVoxelWorld* worldReference)
-{
-	ref = worldReference;
-}
-
-void AdditionalGenerations::generatePerlinWorms(const float& X, const float& Y, const float& Z, const int& interval, const int& range, FVoxelFastNoise &PerlinWormsNoise)
-{
-	if (ref != nullptr)
-	{
-		TArray<FVector> vectors;
-
-		for (int i = 0; i < interval; ++i) {
-			vectors.Add(FVector(PerlinWormsNoise.GetPerlin_3D(X + 0.5f + i, Y + 0.5f, Z + 0.5f, 3.02f) * 360.0f, PerlinWormsNoise.GetPerlin_3D(X + 0.5f + i, Y + 0.5f, Z + 1.5f, 3.02f) * 360.0f, PerlinWormsNoise.GetPerlin_3D(X + 0.5f + i, Y + 0.5f, Z + 2.5f, 3.02f) * 360.0f));
-		}
-
-		for (int i = 0; i < interval; ++i) {
-			for (int j = 0; j < range; ++j) {
-				UVoxelDataTools::SetMaterial((AVoxelWorld*)ref, FIntVector(1, 2, 3), )
-			}
-		}
-	}
-}
-
-void AdditionalGenerations::setMaterialInArea(const FVector& start, const FVector& end, const int& range)
-{
-	FVoxelMaterialBuilder builder;
-	builder.SetMaterialConfig(EVoxelMaterialConfig::SingleIndex);
-	builder.SetSingleIndex(2);
-
-	for (int i = 0; i < 10000; ++i) {
-		for (int j = 0; j < 10000; ++j) {
-			for (int k = 0; k < 10000; ++k) {
-				UVoxelDataTools::SetMaterial((AVoxelWorld*)ref, FIntVector(i, j, k), )
-			}
-		}
-	}
-}
-*/
 
 ///////////////////////////////////////////////////////////////////////////////
 
@@ -106,8 +63,25 @@ void FVoxelCavesWorldGeneratorInstance::Init(const FVoxelWorldGeneratorInit& Ini
 v_flt FVoxelCavesWorldGeneratorInstance::GetValueImpl(v_flt X, v_flt Y, v_flt Z, int32 LOD, const FVoxelItemStack& Items) const
 {
 	//const float Height = Noise.GetPerlin_3D(X * 0.01f, Y * 0.01f, Z * 0.02f, 1.0f);
+	float Height = Noise.GetValueFractal_3D(X * 0.01f + 0.5f, Y * 0.01f + 0.5f, Z * 0.01f + 0.5f, 1.2f, 12);
+	//float Height = sin(Noise.GetValueFractal_3D(X * 0.01f + 0.5f, Y * 0.01f + 0.5f, Z * 0.01f + 0.5f, 1.2f, 12) * 3.141592 * 2) * sin(Noise.GetPerlin_3D(X * 0.01f + 0.5f, Y * 0.01f + 0.5f, Z * 0.01f + 0.5f, 1.2f) * 3.141592 * 2);
+	//float Height = sin(Noise.GetPerlin_3D(X * 0.01f + 0.5f, Y * 0.01f + 0.5f, Z * 0.01f + 0.5f, 1.2f) * 3.141592 * 2);
 
-	const float Height = Noise.GetValueFractal_3D(X * 0.01f, Y * 0.01f, Z * 0.01f, 1.2f, 12);// * Noise.GetValueFractal_3D(X, Y, Z, 0.02f, 6);
+
+
+	if (Height < 0)
+	{
+		if (Noise.GetCellular_3D(X + 0.5f, Y + 0.5f, Z + 0.5f, 0.001f) < 0.5f)
+		{
+			float cellularNoise = cos(Noise.GetCellular_3D(X + 0.5f, Y + 0.5f, Z + 0.5f, 0.09f) * 3.141592 * 2);
+			if (cellularNoise < 0)
+			{
+				Height *= cellularNoise;
+			}
+		}
+	}
+	
+	// * Noise.GetValueFractal_3D(X, Y, Z, 0.02f, 6);
 
 	//VoxelBuffer::bufferFunction(Height);
 
@@ -128,8 +102,6 @@ FVoxelMaterial FVoxelCavesWorldGeneratorInstance::GetMaterialImpl(v_flt X, v_flt
 
 	if (Noise.GetValueFractal_3D(X * 0.07f + 0.5f, Y * 0.07f + 0.5f, Z * 0.07f + 0.5f, 1.0f, 1) > 0.9f) {
 		builder.SetSingleIndex(2);
- 
-
 	}
 
 	return builder.Build();
