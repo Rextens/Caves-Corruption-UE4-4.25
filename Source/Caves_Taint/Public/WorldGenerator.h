@@ -11,7 +11,11 @@
 #include "VoxelTools/VoxelDataTools.h"
 #include "VoxelData/VoxelData.h"
 #include "VoxelWorld.h"
+#include "Biome.h"
+#include "DarkCorridors.h"
+#include "NarrowCorridors.h"
 #include <map>
+#include "TestSubject.h"
 #include "WorldGenerator.generated.h"
 
 /**
@@ -65,9 +69,15 @@ public:
 	virtual FVector GetUpVector(v_flt X, v_flt Y, v_flt Z) const override final;
 	//~ End FVoxelWorldGeneratorInstance Interface
 	
+	TArray<TestSubject*> testReferences;
+	TArray<Biome*> biomeReferences;
+	float biomeFrequences;
+	int32 biomeSizes;
+
+	void initBiome(Biome* biomeReference);
+
 	int32 seed;
 
-private:
 	const float NoiseHeight;
 	FVoxelFastNoise Noise;
 	FVoxelFastNoise PerlinWormsNoise;

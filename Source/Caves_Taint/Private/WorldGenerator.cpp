@@ -11,9 +11,7 @@
 
 TVoxelSharedRef<FVoxelWorldGeneratorInstance> UWorldGenerator::GetInstance()
 {
-	return MakeVoxelShared<FVoxelCavesWorldGeneratorInstance>(*this);
-
-	
+	return MakeVoxelShared<FVoxelCavesWorldGeneratorInstance>(*this);	
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -54,6 +52,19 @@ void FVoxelCavesWorldGeneratorInstance::Init(const FVoxelWorldGeneratorInit& Ini
 	UGameplayStatics::SaveGameToSlot(saveWorldInstance, TEXT("worldSeed"), 0);
 	*/
 
+	//NewObject<>()
+	
+	//UNarrowCorridors a = new UNarrowCorridors();
+	//UDarkCorridors a = new UDarkCorridors();
+
+	//TestSubject* x = new TestSubject();
+	//TestSubject* y = new TestSubject();
+
+	//testReferences.Add(x);
+	//testReferences.Add(y);
+
+	initBiome(new NarrowCorridors());
+	initBiome(new DarkCorridors());
 
 	//worldReference;
 
@@ -69,6 +80,7 @@ v_flt FVoxelCavesWorldGeneratorInstance::GetValueImpl(v_flt X, v_flt Y, v_flt Z,
 
 
 
+	/*
 	if (Height < 0)
 	{
 		if (Noise.GetCellular_3D(X + 0.5f, Y + 0.5f, Z + 0.5f, 0.001f) < 0.5f)
@@ -80,31 +92,55 @@ v_flt FVoxelCavesWorldGeneratorInstance::GetValueImpl(v_flt X, v_flt Y, v_flt Z,
 			}
 		}
 	}
+	*/
+	
+	float height = abs(Noise.GetCellular_3D(X + 0.5f, Y + 0.5f, Z + 0.5f, 0.001f)) * biomeFrequences;
+	float summedBiomesHeight = 0;
+
+	for (int i = 0; i < biomeReferences.Num(); ++i)
+	{
+		if (biomeReferences[i] != nullptr)
+		{
+			summedBiomesHeight += biomeReferences[i]->frequency;
+			if (summedBiomesHeight >= height)
+			{
+				//float p = testReferences[i]->generate();
+				return biomeReferences[i]->generator(Noise, X, Y, Z);
+			}
+		}
+	}
+	
 	
 	// * Noise.GetValueFractal_3D(X, Y, Z, 0.02f, 6);
 
 	//VoxelBuffer::bufferFunction(Height);
 
-	return Height;
+	//return height;
+
+	return 0.0f;
 }
 
 FVoxelMaterial FVoxelCavesWorldGeneratorInstance::GetMaterialImpl(v_flt X, v_flt Y, v_flt Z, int32 LOD, const FVoxelItemStack& Items) const
 { 
 	FVoxelMaterialBuilder builder;
 	builder.SetMaterialConfig(EVoxelMaterialConfig::SingleIndex);
+
+	float height = abs(Noise.GetCellular_3D(X + 0.5f, Y + 0.5f, Z + 0.5f, 0.001f)) * biomeFrequences;
+	float summedBiomesHeight = 0;
 	
-	if (Noise.GetCellular_3D(X + 0.5f, Y + 0.5f, Z + 0.5f, 0.001f) < 0.5f) {
-		builder.SetSingleIndex(0);
-	}
-	else {
-		builder.SetSingleIndex(1);
+	for (int i = 0; i < biomeReferences.Num(); ++i)
+	{
+		summedBiomesHeight += biomeReferences[i]->frequency;
+		if (summedBiomesHeight >= height)
+		{
+			builder.SetSingleIndex(biomeReferences[i]->meshID);
+
+
+			return builder.Build();
+		}
 	}
 
-	if (Noise.GetValueFractal_3D(X * 0.07f + 0.5f, Y * 0.07f + 0.5f, Z * 0.07f + 0.5f, 1.0f, 1) > 0.9f) {
-		builder.SetSingleIndex(2);
-	}
-
-	return builder.Build();
+	
 
 	/*
 	if (Noise.GetPerlin_3D(X, Y, Z, 1.0f) < 0.9) {
@@ -148,5 +184,12 @@ FVector FVoxelCavesWorldGeneratorInstance::GetUpVector(v_flt X, v_flt Y, v_flt Z
 {
 	// Used by spawners
 	return FVector::UpVector;
+}
+
+void FVoxelCavesWorldGeneratorInstance::initBiome(Biome* biomeReference)
+{
+	biomeReferences.Add(biomeReference);
+	biomeFrequences += biomeReference->frequency;
+	biomeSizes += biomeReference->size;
 }
 

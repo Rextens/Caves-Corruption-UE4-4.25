@@ -7,9 +7,11 @@
 /**
  * 
  */
-class LIBNOISE_API MyClass
+class CAVES_TAINT_API TestSubject
 {
 public:
-	MyClass();
-	~MyClass();
+	TestSubject();
+	~TestSubject();
+
+	float generate();
 };
