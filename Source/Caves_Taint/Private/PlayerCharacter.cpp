@@ -328,6 +328,39 @@ void APlayerCharacter::insertItemToEquipment(FName objectID, UClass* objectClass
 	}
 }
 
+void APlayerCharacter::insertItemReferenceToEquipment(UItem* itemReference, int32 index)
+{
+	if (itemReference->stackable)
+	{
+		UStackableItem* stackableItemReference = Cast<UStackableItem>(DuplicateObject<UItem>(itemReference, this));
+
+		itemsInEquipment.SetNum(itemsInEquipment.Num() + 1);
+
+		for (int i = itemsInEquipment.Num() - 1; i >= index + 1; --i)
+		{
+			itemsInEquipment[i] = itemsInEquipment[i - 1];
+		}
+
+		itemsInEquipment[index] = stackableItemReference;
+	}
+	else
+	{
+		UItem* duplicatedItemReference = DuplicateObject<UItem>(itemReference, this);
+
+		itemsInEquipment.SetNum(itemsInEquipment.Num() + 1);
+
+		for (int i = itemsInEquipment.Num() - 1; i >= index + 1; --i)
+		{
+			itemsInEquipment[i] = itemsInEquipment[i - 1];
+		}
+
+		itemsInEquipment[index] = duplicatedItemReference;
+	}
+
+	updateItemIndexes();
+}
+
+
 void APlayerCharacter::removeItemFromEquipment(int32 index, bool removeWholeStack, int32 removeMoreThanOneItem)
 {
 	if (itemsInEquipment[index]->stackable)

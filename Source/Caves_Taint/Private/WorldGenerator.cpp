@@ -52,17 +52,6 @@ void FVoxelCavesWorldGeneratorInstance::Init(const FVoxelWorldGeneratorInit& Ini
 	UGameplayStatics::SaveGameToSlot(saveWorldInstance, TEXT("worldSeed"), 0);
 	*/
 
-	//NewObject<>()
-	
-	//UNarrowCorridors a = new UNarrowCorridors();
-	//UDarkCorridors a = new UDarkCorridors();
-
-	//TestSubject* x = new TestSubject();
-	//TestSubject* y = new TestSubject();
-
-	//testReferences.Add(x);
-	//testReferences.Add(y);
-
 	initBiome(new NarrowCorridors());
 	initBiome(new DarkCorridors());
 
@@ -73,26 +62,7 @@ void FVoxelCavesWorldGeneratorInstance::Init(const FVoxelWorldGeneratorInit& Ini
 
 v_flt FVoxelCavesWorldGeneratorInstance::GetValueImpl(v_flt X, v_flt Y, v_flt Z, int32 LOD, const FVoxelItemStack& Items) const
 {
-	//const float Height = Noise.GetPerlin_3D(X * 0.01f, Y * 0.01f, Z * 0.02f, 1.0f);
 	float Height = Noise.GetValueFractal_3D(X * 0.01f + 0.5f, Y * 0.01f + 0.5f, Z * 0.01f + 0.5f, 1.2f, 12);
-	//float Height = sin(Noise.GetValueFractal_3D(X * 0.01f + 0.5f, Y * 0.01f + 0.5f, Z * 0.01f + 0.5f, 1.2f, 12) * 3.141592 * 2) * sin(Noise.GetPerlin_3D(X * 0.01f + 0.5f, Y * 0.01f + 0.5f, Z * 0.01f + 0.5f, 1.2f) * 3.141592 * 2);
-	//float Height = sin(Noise.GetPerlin_3D(X * 0.01f + 0.5f, Y * 0.01f + 0.5f, Z * 0.01f + 0.5f, 1.2f) * 3.141592 * 2);
-
-
-
-	/*
-	if (Height < 0)
-	{
-		if (Noise.GetCellular_3D(X + 0.5f, Y + 0.5f, Z + 0.5f, 0.001f) < 0.5f)
-		{
-			float cellularNoise = cos(Noise.GetCellular_3D(X + 0.5f, Y + 0.5f, Z + 0.5f, 0.09f) * 3.141592 * 2);
-			if (cellularNoise < 0)
-			{
-				Height *= cellularNoise;
-			}
-		}
-	}
-	*/
 	
 	float height = abs(Noise.GetCellular_3D(X + 0.5f, Y + 0.5f, Z + 0.5f, 0.001f)) * biomeFrequences;
 	float summedBiomesHeight = 0;
@@ -104,18 +74,10 @@ v_flt FVoxelCavesWorldGeneratorInstance::GetValueImpl(v_flt X, v_flt Y, v_flt Z,
 			summedBiomesHeight += biomeReferences[i]->frequency;
 			if (summedBiomesHeight >= height)
 			{
-				//float p = testReferences[i]->generate();
 				return biomeReferences[i]->generator(Noise, X, Y, Z);
 			}
 		}
 	}
-	
-	
-	// * Noise.GetValueFractal_3D(X, Y, Z, 0.02f, 6);
-
-	//VoxelBuffer::bufferFunction(Height);
-
-	//return height;
 
 	return 0.0f;
 }
@@ -139,22 +101,6 @@ FVoxelMaterial FVoxelCavesWorldGeneratorInstance::GetMaterialImpl(v_flt X, v_flt
 			return builder.Build();
 		}
 	}
-
-	
-
-	/*
-	if (Noise.GetPerlin_3D(X, Y, Z, 1.0f) < 0.9) {
-		builder.SetSingleIndex(1);
-	}
-	else {
-		builder.SetSingleIndex(2);
-	}
-	if (Noise.GetCellular_3D(X, Y, Z, 0.001f) < 0.5f) {
-		return builder.Build();
-	}
-	*/
-
-	//builder.SetSingleIndex(1);
 
 	return FVoxelMaterial::Default(); //Just to return something
 }

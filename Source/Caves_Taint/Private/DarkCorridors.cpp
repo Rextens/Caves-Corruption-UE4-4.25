@@ -13,8 +13,3 @@ float DarkCorridors::generator(const FVoxelFastNoise& noise, const v_flt& X, con
 {
 	return noise.GetValueFractal_3D(X * 0.01f + 0.5f, Y * 0.01f + 0.5f, Z * 0.01f + 0.5f, 1.2f, 12);
 }
-
-float DarkCorridors::generatorv2()
-{
-	return 2.0f;
-}

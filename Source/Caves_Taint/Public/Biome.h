@@ -19,5 +19,4 @@ public:
 	int32 meshID = 0;
 
 	virtual float generator(const FVoxelFastNoise &noise, const v_flt& X, const v_flt& Y, const v_flt& Z) { return 0.0f; };
-	virtual float generatorv2() { return 0.0f; };
 };

@@ -160,6 +160,9 @@ public:
 	UFUNCTION(BlueprintCallable)
 		void insertItemToEquipment(FName objectID, UClass* objectClass, bool stackable, int32 index, int32 stack);
 
+	UFUNCTION(BlueprintCallable)
+		void insertItemReferenceToEquipment(UItem *itemReference, int32 index);
+
 //	UFUNCTION(BlueprintCallable)
 //		void removeItemFromEquipment(UItem* itemReference, bool removeWholeStack = false, int32 removeMoreThanOneItem = 1);
 

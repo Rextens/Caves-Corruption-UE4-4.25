@@ -14,5 +14,4 @@ public:
 	NarrowCorridors();
 
 	float generator(const FVoxelFastNoise &noise, const v_flt& X, const v_flt& Y, const v_flt& Z) override;
-	float generatorv2() override;
 };
