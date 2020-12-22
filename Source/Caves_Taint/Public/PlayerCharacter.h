@@ -148,6 +148,9 @@ public:
 				itemsInEquipment[itemsInEquipment.Num() - 1]->equipmentIndex = itemsInEquipment.Num() - 1;
 			}
 		}
+
+	UFUNCTION(BlueprintCallable)
+		void addItemReferenceToEquipment(UItem* itemReference);
 	//UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	//	TSubclassOf<UEquipment> equipmentClassReference;
 

@@ -291,6 +291,34 @@ void APlayerCharacter::removeItemFromEquipment(UItem* itemReference, bool remove
 }
 */
 
+void APlayerCharacter::addItemReferenceToEquipment(UItem* itemReference)
+{
+	if (itemReference != nullptr)
+	{
+		if (itemReference->stackable)
+		{
+			UStackableItem* stackableItem = NewObject<UStackableItem>();
+
+			stackableItem->itemName = itemReference->itemName;
+			stackableItem->placedItemClass = itemReference->placedItemClass;
+
+			stackableItem->stack = Cast<UStackableItem>(itemReference)->stack;
+			itemsInEquipment.Add(stackableItem);
+			itemsInEquipment[itemsInEquipment.Num() - 1]->equipmentIndex = itemsInEquipment.Num() - 1;
+		}
+		else
+		{
+			UItem* createdItem = NewObject<UItem>();
+
+			createdItem->itemName = itemReference->itemName;
+			createdItem->placedItemClass = itemReference->placedItemClass;
+
+			itemsInEquipment.Add(createdItem);
+			itemsInEquipment[itemsInEquipment.Num() - 1]->equipmentIndex = itemsInEquipment.Num() - 1;
+		}
+	}
+}
+
 void APlayerCharacter::insertItemToEquipment(FName objectID, UClass* objectClass, bool stackable, int32 index, int32 stack)
 {
 	if (stackable)

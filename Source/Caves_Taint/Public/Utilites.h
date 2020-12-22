@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "Kismet/BlueprintFunctionLibrary.h"
 #include "UObject/UObjectGlobals.h"
+#include "Item.h"
 #include "Utilites.generated.h"
 
 /**
@@ -18,4 +19,7 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 		static UObject* duplicateObject(UObject* reference, UObject* owner);
+
+	UFUNCTION(BlueprintCallable)
+		static void swapItemPointers(UItem* firstItem, UItem* secondItem);
 };
