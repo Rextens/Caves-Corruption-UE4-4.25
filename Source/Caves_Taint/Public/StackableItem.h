@@ -9,7 +9,7 @@
 /**
  * 
  */
-UCLASS()
+UCLASS(BlueprintType)
 class CAVES_TAINT_API UStackableItem : public UItem
 {
 	GENERATED_BODY()

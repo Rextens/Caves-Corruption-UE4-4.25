@@ -10,8 +10,8 @@ UObject* UUtilites::duplicateObject(UObject* reference, UObject *owner)
 
 void UUtilites::swapItemPointers(UItem* firstItem, UItem* secondItem)
 {
-	//UItem* temp = DuplicateObject<UItem>(firstItem, owner);
-	firstItem->itemName = "fnsjfbdshjfbds";
-	secondItem = firstItem;
-	//secondItem = temp;
+	//std::swap(firstItem, secondItem);
+	UItem* temp = firstItem;
+	firstItem = secondItem;
+	secondItem = temp;
 }

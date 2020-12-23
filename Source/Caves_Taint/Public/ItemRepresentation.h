@@ -19,12 +19,7 @@ class CAVES_TAINT_API UItemRepresentation : public UUserWidget
 	GENERATED_BODY()
 
 public:
-	
-	UItemRepresentation(const FObjectInitializer& objectInitializer);
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		UItem* item;
-
-	UFUNCTION(BlueprintCallable)
-		void addItemToToolbar();
 };
