@@ -17,3 +17,9 @@ void UEquipment::updateDisplay_Implementation()
 {
 
 }
+
+void UEquipment::onClose()
+{
+	if(GEngine)
+		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("Couldn't load"));
+}

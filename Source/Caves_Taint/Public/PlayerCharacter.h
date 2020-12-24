@@ -75,7 +75,7 @@ public:
 		int32 selectedItem = 0;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-		TArray<UUserWidget*> currentlyOpenUIs;
+		TArray<UUIBase*> currentlyOpenUIs;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		bool isItemDraggableGuiOpen = false;

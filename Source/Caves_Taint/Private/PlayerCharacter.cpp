@@ -64,6 +64,8 @@ void APlayerCharacter::BeginPlay()
 	Super::BeginPlay();
 
 	addItemToEquipment("Bioprogrammator", ABioProgrammator::StaticClass(), true, false, 10);
+	addItemToEquipment("NotStackable", nullptr, false, false, 10);
+
 	playerController = Cast<ACharacterController>(GetController());
 	
 	if (playerController)

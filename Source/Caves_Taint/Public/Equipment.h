@@ -5,13 +5,14 @@
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
 #include "StackableItem.h"
+#include "UIBase.h"
 #include "Equipment.generated.h"
 
 /**
  * 
  */
 UCLASS()
-class CAVES_TAINT_API UEquipment : public UUserWidget
+class CAVES_TAINT_API UEquipment : public UUIBase
 {
 	GENERATED_BODY()
 
@@ -28,4 +29,6 @@ public:
 		void updateDisplay();
 
 		virtual void updateDisplay_Implementation();
+
+		void onClose() override;
 };
