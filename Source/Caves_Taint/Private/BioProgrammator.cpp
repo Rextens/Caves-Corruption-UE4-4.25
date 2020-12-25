@@ -29,23 +29,6 @@ void ABioProgrammator::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 	
-	if (setItem != nullptr)
-	{
-	//	if(*setItem != NULL)
-		//if (*setItem != nullptr)
-		//{
-		//	FString xxx = (*setItem)->itemName.ToString();
-		//}
-		//{
-		//	
-		//	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, FString::Printf(TEXT("Some variable values: x: %s"), *xxx));
-		//}
-		//GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("This is an on screen message!"));
-	}
-	else
-	{
-		//
-	}
 }
 
 void ABioProgrammator::activation()
@@ -91,26 +74,44 @@ void ABioProgrammator::activation()
 
 void ABioProgrammator::printPointer()
 {
-	FString xxx = (*setItem)->itemName.ToString();
+	//FString xxx = (*setItem)->itemName.ToString();
 
-	if (GEngine)
-		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, FString::Printf(TEXT("World delta for current frame equals %s"), *xxx));
+	//if (GEngine)
+	//	GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, FString::Printf(TEXT("World delta for current frame equals %s"), *xxx));
 }
 
 void ABioProgrammator::setItemPointer(UItemSlot *itemSlotReference)
 {
-	setItem = &itemSlotReference->slotItemReference;
+	setItems.Add(&itemSlotReference->slotItemReference);
+	itemSlotReference->slotID = setItems.Num() - 1;
 
-	if (saveItem != nullptr)
+	GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, FString::Printf(TEXT("World delta for current frame equals %i"), saveItems.Num()));
+	if (itemSlotReference->slotID <= saveItems.Num() - 1)
 	{
-		itemSlotReference->slotItemReference = saveItem;
+		if (saveItems[itemSlotReference->slotID] != nullptr)
+		{
+			GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, FString::Printf(TEXT("World delta for current frame equals")));
+			itemSlotReference->slotItemReference = saveItems[itemSlotReference->slotID];
+		}
 	}
 }
 
 void ABioProgrammator::saveData()
 {
-	if (setItem != nullptr)
+	for (int i = 0; i < setItems.Num(); ++i)
 	{
-		saveItem = *setItem;
+		if (saveItems.Num() - 1 < i)
+		{
+			if (saveItems.Num() < setItems.Num())
+			{
+				saveItems.Add(nullptr);
+			}
+			saveItems[i] = *setItems[i];
+		}
+		else if (setItems[i] != nullptr)
+		{
+			saveItems[i] = *setItems[i];
+		}
 	}
+	setItems.Empty();
 }

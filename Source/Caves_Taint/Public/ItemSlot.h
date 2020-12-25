@@ -18,4 +18,7 @@ class CAVES_TAINT_API UItemSlot : public UUserWidget
 public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		UItem* slotItemReference;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		int32 slotID = 0;
 };
