@@ -6,7 +6,7 @@
 #include "GameFramework/Actor.h"
 #include "PlacedItem.generated.h"
 
-UCLASS()
+UCLASS(BlueprintType)
 class CAVES_TAINT_API APlacedItem : public AActor
 {
 	GENERATED_BODY()

@@ -16,7 +16,7 @@ class UProgrammerInterface;
 /**
  * 
  */
-UCLASS()
+UCLASS(BlueprintType)
 class CAVES_TAINT_API ABioProgrammator : public AActiveableItem, public IItemHolder
 {
 	GENERATED_BODY()
@@ -48,6 +48,8 @@ public:
 		void saveData();
 
 
-	TArray<UItem**> setItems;
-	TArray<UItem*> saveItems;
+		TArray<UItem**> setItems;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		TArray<UItem*> saveItems;
 };
