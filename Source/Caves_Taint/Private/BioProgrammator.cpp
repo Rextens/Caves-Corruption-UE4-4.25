@@ -96,6 +96,16 @@ void ABioProgrammator::setItemPointer(UItemSlot *itemSlotReference)
 	}
 }
 
+TArray<UItem*> ABioProgrammator::getItems_Implementation()
+{
+	return saveItems;
+}
+
+void ABioProgrammator::setItemsArray_Implementation(UPARAM(ref) TArray<UItem*> &items)
+{
+	saveItems = items;
+}
+
 void ABioProgrammator::saveData()
 {
 	for (int i = 0; i < setItems.Num(); ++i)

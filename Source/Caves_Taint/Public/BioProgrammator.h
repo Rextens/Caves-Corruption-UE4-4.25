@@ -16,6 +16,7 @@ class UProgrammerInterface;
 /**
  * 
  */
+
 UCLASS(BlueprintType)
 class CAVES_TAINT_API ABioProgrammator : public AActiveableItem, public IItemHolder
 {
@@ -47,6 +48,9 @@ public:
 	UFUNCTION(BlueprintCallable)
 		void saveData();
 
+		TArray<UItem*> getItems_Implementation();
+
+		void setItemsArray_Implementation(UPARAM(ref) TArray<UItem*> &items);
 
 		TArray<UItem**> setItems;
 	

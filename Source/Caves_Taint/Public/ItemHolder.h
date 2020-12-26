@@ -20,6 +20,10 @@ class UItemHolder : public UInterface
 class CAVES_TAINT_API IItemHolder
 {
 	GENERATED_BODY()
-	// Add interface functions to this class. This is the class that will be inherited to implement this interface.
 public:
+	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
+		TArray<UItem*> getItems();
+
+	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
+		void setItemsArray(UPARAM(ref) TArray<UItem*> &items);
 };
