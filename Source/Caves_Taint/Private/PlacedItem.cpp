@@ -14,6 +14,7 @@ APlacedItem::APlacedItem()
 
 	static ConstructorHelpers::FObjectFinder<UStaticMesh> meshFinder(TEXT("/Game/StarterContent/Shapes/Shape_Cube"));
 	mesh->SetStaticMesh(meshFinder.Object);
+	mesh->SetEnableGravity(false);
 }
 
 // Called when the game starts or when spawned

@@ -13,6 +13,7 @@
 #include "StackableItem.h"
 #include "Equipment.h"
 #include <map>
+#include "chunkBox.h"
 #include "PlayerCharacter.generated.h"
 
 UCLASS()
@@ -24,7 +25,7 @@ public:
 	// Sets default values for this character's properties
 	APlayerCharacter(const FObjectInitializer& objectInitializer);
 
-protected:
+protected: 
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
@@ -177,4 +178,32 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 		void updateItemIndexes();
+
+	UFUNCTION(BlueprintCallable)
+		void saveCube(FVector cubeLocation);
+
+	UFUNCTION(BlueprintCallable)
+		FVector getPlayerCube();
+
+	UFUNCTION(BlueprintCallable)
+		void spawnStartingChunkCubes();
+
+	UFUNCTION(BlueprintCallable)
+		void checkChunks();
+
+	UFUNCTION(BlueprintCallable)
+		void removeChunks();
+
+	UFUNCTION(BlueprintCallable)
+		int32 findChunk(FVector position);
+
+	TArray<AchunkBox*> chunks;
+
+	AchunkBox* mainBoxes[3][3][3];
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		FVector lastChunk;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		int32 renderRadius = 5;
 };

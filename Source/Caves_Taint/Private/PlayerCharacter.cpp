@@ -89,6 +89,32 @@ void APlayerCharacter::BeginPlay()
 //	{
 //		itemsInToolBar.Add(nullptr);
 //	}
+
+	FVector test0 = FVector(15.0f, 15.0f, 15.0f);
+	FVector test1 = FVector(15.0f, 15.0f, 15.0f);
+		test0 = test0 + 2000.0f;
+
+		bool test2 = false;
+
+		if (test0 == test1 + 2000.0f)
+		{
+			test2 = true;
+		}
+	
+		int32 test3;
+
+		if (test2)
+		{
+			test3 = 1;
+		}
+		else
+		{
+			test3 = 0;
+		}
+
+//	if (GEngine)
+//		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, FString::Printf(TEXT("X: %f, Y: %f, Z: %f"), test0.X, test0.Y, test0.Z));
+		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, FString::Printf(TEXT("test: %i"), test3));
 }
 
 // Called every frame
@@ -96,6 +122,8 @@ void APlayerCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
+	checkChunks();
+	removeChunks();
 }
 
 // Called to bind functionality to input
@@ -437,4 +465,82 @@ void APlayerCharacter::updateItemIndexes()
 	{
 		itemsInEquipment[i]->equipmentIndex = i;
 	}
+}
+
+void APlayerCharacter::saveCube(FVector cubeLocation)
+{
+
+}
+
+
+FVector APlayerCharacter::getPlayerCube()
+{
+	return FVector(floor(GetActorLocation().X / 4096.0f), floor(GetActorLocation().Y / 4096.0f), floor(GetActorLocation().Z / 4096.0f));
+}
+
+void APlayerCharacter::spawnStartingChunkCubes()
+{
+	FVector playerCube = getPlayerCube();
+	for (int i = 0; i < 3; ++i)
+	{
+		for (int j = 0; j < 3; ++j)
+		{
+			for (int k = 0; k < 3; ++k)
+			{
+				mainBoxes[i][j][k] = GetWorld()->SpawnActor<AchunkBox>();	
+				//GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, FString::Printf(TEXT("Some variable values: x: %f, y: %f, z: %f"), playerCube.X, playerCube.Y, playerCube.Z));
+				mainBoxes[i][j][k]->SetActorLocation(FVector((playerCube.X + i - 1) * 8192.0f,
+					(playerCube.Y + j - 1) * 8192.0f,
+					(playerCube.Z + k - 1) * 8192.0f));
+			}
+		}
+	}
+}
+
+void APlayerCharacter::checkChunks()
+{
+	FVector playerChunk = getPlayerCube();
+	for (int x = -renderRadius; x < renderRadius; ++x)
+	{
+		for (int y = -renderRadius; y < renderRadius; ++y)
+		{
+			for (int z = -renderRadius; z < renderRadius; ++z)
+			{
+				FVector currentChunk = getPlayerCube();
+				FVector finalLocation = FVector(4096.0f * (currentChunk.X + x) + 2048.0f, 4096.0f * (currentChunk.Y + y) + 2048.0f, 4096.0f * (currentChunk.Z + z) + 2048.0f);
+				
+				if (findChunk(finalLocation) == -1)
+				{
+					chunks.Add(GetWorld()->SpawnActor<AchunkBox>());
+					chunks[chunks.Num() - 1]->SetActorLocation(finalLocation);
+				}
+			}
+		}
+	}
+}
+
+void APlayerCharacter::removeChunks()
+{
+	for (int i = 0; i < chunks.Num(); ++i)
+	{
+		if (abs(floor(chunks[i]->GetActorLocation().X / 4096.0f) - getPlayerCube().X) > renderRadius ||
+			abs(floor(chunks[i]->GetActorLocation().Y / 4096.0f) - getPlayerCube().Y) > renderRadius ||
+			abs(floor(chunks[i]->GetActorLocation().Z / 4096.0f) - getPlayerCube().Z) > renderRadius)
+		{
+			chunks[i]->Destroy();
+			chunks.RemoveAt(i);
+		}
+	}
+}
+
+int32 APlayerCharacter::findChunk(FVector position)
+{
+	for (int i = 0; i < chunks.Num(); ++i)
+	{
+		if (chunks[i]->GetActorLocation() == position)
+		{
+			return i;
+		}
+	}
+	return -1;
 }
