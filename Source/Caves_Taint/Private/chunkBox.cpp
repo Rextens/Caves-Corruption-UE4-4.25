@@ -55,7 +55,7 @@ void AchunkBox::onSpawned()
 					if (saveChunkInstance->itemSlots[i].itemSlots[j].index > itemsSlots->saveItems.Num())
 					{
 						GEngine->AddOnScreenDebugMessage(-1, 50.0f, FColor::Red, FString::FromInt(saveChunkInstance->itemSlots[i].itemSlots[j].index));
-						while(itemsSlots->saveItems.Num() == saveChunkInstance->itemSlots[i].itemSlots[j].index)
+						while(saveChunkInstance->itemSlots[i].itemSlots[j].index > itemsSlots->saveItems.Num())
 						{
 							itemsSlots->saveItems.Add(nullptr);
 						}
@@ -127,6 +127,21 @@ void AchunkBox::DestroyChunk()
 
 		UGameplayStatics::SaveGameToSlot(saveChunkInstance, savePath, 0);
 	}
+	else
+	{
+		APlayerCharacter* characterReference = Cast<APlayerCharacter>(UGameplayStatics::GetPlayerCharacter(GetWorld(), 0));
+		FString savePath = characterReference->currentWorldName + "/chunks/" + "chunk_" + FString::FromInt(floor(GetActorLocation().X / 4096.0f)) + "_" +
+			FString::FromInt(floor(GetActorLocation().Y / 4096.0f)) + "_" +
+			FString::FromInt(floor(GetActorLocation().Z / 4096.0f));
+
+		UGameplayStatics::DeleteGameInSlot(savePath, 0);
+	}
+
+	for (int i = 0; i < actorsInChunk.Num(); ++i)
+	{
+		actorsInChunk[i]->Destroy();
+	}
+
 	Destroy();
 }
 
