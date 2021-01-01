@@ -12,6 +12,7 @@
 #include "BioProgrammator.h"
 #include "StackableItem.h"
 #include "Equipment.h"
+#include "UsableItem.h"
 #include <map>
 #include "chunkBox.h"
 #include "PlayerCharacter.generated.h"
@@ -65,6 +66,9 @@ public:
 
 	//UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		//TArray<UItem*> itemsInToolBar;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		FString currentWorldName;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		UItem* leftHand = nullptr;
@@ -199,11 +203,9 @@ public:
 
 	TArray<AchunkBox*> chunks;
 
-	AchunkBox* mainBoxes[3][3][3];
-
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		FVector lastChunk;
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-		int32 renderRadius = 5;
+		int32 renderRadius = 1;
 };

@@ -122,8 +122,11 @@ void APlayerCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
-	checkChunks();
-	removeChunks();
+	if (currentWorldName != "")
+	{
+		checkChunks();
+		removeChunks();
+	}
 }
 
 // Called to bind functionality to input
@@ -257,9 +260,10 @@ void APlayerCharacter::placeItem()
 		GetWorld()->LineTraceSingleByChannel(hitResult, characterView->GetComponentLocation(), characterView->GetForwardVector() * 1000.0f + characterView->GetComponentLocation(), ECC_Visibility);
 		DrawDebugLine(GetWorld(), characterView->GetComponentLocation(), characterView->GetForwardVector() * 1000.0f + characterView->GetComponentLocation(), FColor::Red, false, 2.0f);
 
-		AActiveableItem* activeable = Cast<AActiveableItem>(hitResult.Actor);
+		
+		//AActiveableItem* activeable = Cast<AActiveableItem>(hitResult.Actor);
 
-		if (!activeable)
+		if (!hitResult.Actor->GetClass()->ImplementsInterface(UUsableItem::StaticClass()))
 		{
 			if (selectedItem < itemsInEquipment.Num())
 			{
@@ -275,7 +279,7 @@ void APlayerCharacter::placeItem()
 		}
 		else
 		{
-			activeable->activation();
+			Cast<IUsableItem>(hitResult.Actor)->activation();
 		}
 	}
 }
@@ -487,11 +491,13 @@ void APlayerCharacter::spawnStartingChunkCubes()
 		{
 			for (int k = 0; k < 3; ++k)
 			{
+				/*
 				mainBoxes[i][j][k] = GetWorld()->SpawnActor<AchunkBox>();	
 				//GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, FString::Printf(TEXT("Some variable values: x: %f, y: %f, z: %f"), playerCube.X, playerCube.Y, playerCube.Z));
 				mainBoxes[i][j][k]->SetActorLocation(FVector((playerCube.X + i - 1) * 8192.0f,
 					(playerCube.Y + j - 1) * 8192.0f,
 					(playerCube.Z + k - 1) * 8192.0f));
+					*/
 			}
 		}
 	}
@@ -513,6 +519,7 @@ void APlayerCharacter::checkChunks()
 				{
 					chunks.Add(GetWorld()->SpawnActor<AchunkBox>());
 					chunks[chunks.Num() - 1]->SetActorLocation(finalLocation);
+					chunks[chunks.Num() - 1]->onSpawned();
 				}
 			}
 		}
@@ -527,7 +534,7 @@ void APlayerCharacter::removeChunks()
 			abs(floor(chunks[i]->GetActorLocation().Y / 4096.0f) - getPlayerCube().Y) > renderRadius ||
 			abs(floor(chunks[i]->GetActorLocation().Z / 4096.0f) - getPlayerCube().Z) > renderRadius)
 		{
-			chunks[i]->Destroy();
+			chunks[i]->DestroyChunk();
 			chunks.RemoveAt(i);
 		}
 	}

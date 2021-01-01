@@ -5,6 +5,9 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
 #include "Components/BoxComponent.h"
+#include "ItemHolder.h"
+#include "SaveChunk.h"
+#include "PlacedItemHolder.h"
 #include "chunkBox.generated.h"
 
 UCLASS(BlueprintType)
@@ -27,9 +30,20 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		UBoxComponent* collisionBox;
 
+	void onSpawned();
+
 	UFUNCTION()
 		void OnBeginOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
 
 	UFUNCTION()
 		void OnOverlapEnd(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex);
+
+	UFUNCTION()
+		void DestroyChunk();
+
+	UFUNCTION()
+		FItemSlotSaveStruct convertItemToItemStruct(UItem *item);
+
+	UFUNCTION()
+		UItem* convertItemStructToItem(FItemSlotSaveStruct itemStruct);
 };

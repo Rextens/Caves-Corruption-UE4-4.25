@@ -8,6 +8,8 @@
 #include "Item.h"
 #include "ItemSlot.h"
 #include "ItemHolder.h"
+#include "UsableItem.h"
+#include "PlacedItemHolder.h"
 #include "Kismet/GameplayStatics.h"
 #include "BioProgrammator.generated.h"
 
@@ -18,7 +20,7 @@ class UProgrammerInterface;
  */
 
 UCLASS(BlueprintType)
-class CAVES_TAINT_API ABioProgrammator : public AActiveableItem, public IItemHolder
+class CAVES_TAINT_API ABioProgrammator : public APlacedItemHolder, public IUsableItem
 {
 	GENERATED_BODY()
 public:
@@ -50,10 +52,7 @@ public:
 
 		TArray<UItem*> getItems_Implementation();
 
-		void setItemsArray_Implementation(UPARAM(ref) TArray<UItem*> &items);
+		FItemSlotSaveStructArray getItemsAsStruct_Implementation();
 
-		TArray<UItem**> setItems;
-	
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-		TArray<UItem*> saveItems;
+		void setItemsArray_Implementation(UPARAM(ref) TArray<UItem*> &items);
 };

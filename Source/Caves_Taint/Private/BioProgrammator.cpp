@@ -101,6 +101,26 @@ TArray<UItem*> ABioProgrammator::getItems_Implementation()
 	return saveItems;
 }
 
+FItemSlotSaveStructArray ABioProgrammator::getItemsAsStruct_Implementation()
+{
+	FItemSlotSaveStructArray tempArray;
+	for (int i = 0; i < saveItems.Num(); ++i)
+	{
+		FItemSlotSaveStruct temp;
+		temp.itemName = saveItems[i]->itemName;
+		temp.placedItemClass = saveItems[i]->placedItemClass;
+		temp.stackable = saveItems[i]->stackable;
+		if (saveItems[i]->stackable)
+		{
+			UStackableItem* stackableItem = Cast<UStackableItem>(saveItems[i]);
+			temp.stack = stackableItem->stack;
+		}
+		tempArray.itemSlots.Add(temp);
+	}
+
+	return tempArray;
+}
+
 void ABioProgrammator::setItemsArray_Implementation(UPARAM(ref) TArray<UItem*> &items)
 {
 	saveItems = items;
